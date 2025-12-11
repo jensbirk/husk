@@ -1,33 +1,26 @@
-name: Release
-
-# Trigger this workflow only when you push a tag like "v0.1.0"
+name: Nightly Build
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [ "main" ]
 
 permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  nightly:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: '1.21'
-
-      - name: Build Binary
-        # We build the static binary exactly as we did locally
-        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o husk main.go
-
-      - name: Create Release & Upload
-        uses: softprops/action-gh-release@v1
+      
+      - name: Build
+        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o husk src/main.go
+      
+      - name: Update Nightly Release
+        uses: andymckay/append-release-body@v1
         with:
-          files: husk
-          # Optional: Make it a draft so you can edit release notes before publishing
-          # draft: true
+          tag_name: nightly
+          # This action requires a "nightly" tag to exist first.
+          # You might need to create a release named "nightly" manually once.
