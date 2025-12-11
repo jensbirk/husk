@@ -1,4 +1,6 @@
-name: Nightly Build
+name: Build on Push
+
+# Run on every push to the main branch
 on:
   push:
     branches: [ "main" ]
@@ -7,20 +9,26 @@ permissions:
   contents: write
 
 jobs:
-  nightly:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
         with:
           go-version: '1.21'
-      
-      - name: Build
-        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o husk src/main.go
-      
-      - name: Update Nightly Release
-        uses: andymckay/append-release-body@v1
+
+      - name: Build Binary
+        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o husk main.go
+
+      - name: Publish to "nightly" tag
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: nightly
-          # This action requires a "nightly" tag to exist first.
-          # You might need to create a release named "nightly" manually once.
+          name: Bleeding Edge (Nightly)
+          files: husk
+          prerelease: true
+          # This forces the "nightly" tag to move to the latest commit
+          target_commitish: main
