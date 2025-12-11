@@ -1,0 +1,33 @@
+name: Release
+
+# Trigger this workflow only when you push a tag like "v0.1.0"
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Build Binary
+        # We build the static binary exactly as we did locally
+        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o husk main.go
+
+      - name: Create Release & Upload
+        uses: softprops/action-gh-release@v1
+        with:
+          files: husk
+          # Optional: Make it a draft so you can edit release notes before publishing
+          # draft: true
