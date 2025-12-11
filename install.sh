@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+# --- Configuration ---
+# REPLACE THIS WITH YOUR DETAILS:
+REPO="jensbirk/husk"
+BINARY="husk"
+INSTALL_DIR="$HOME/.local/bin"
+# ---------------------
+
 # Colors
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -10,41 +17,42 @@ NC='\033[0m'
 echo -e "${BLUE}📦 Husk Installer${NC}"
 echo "---------------------"
 
-if ! command -v go &> /dev/null; then
-    echo -e "${RED}❌ Error: Go is not installed.${NC}"
+# 1. Prepare Directory
+mkdir -p "$INSTALL_DIR"
+
+# 2. Determine Download URL (Latest Release)
+ASSET_URL="https://github.com/$REPO/releases/latest/download/$BINARY"
+
+echo -e "⬇️  Downloading latest version from GitHub..."
+
+# 3. Download (Support curl or wget)
+if command -v curl >/dev/null 2>&1; then
+    curl -L -o "$INSTALL_DIR/$BINARY" "$ASSET_URL"
+elif command -v wget >/dev/null 2>&1; then
+    wget -O "$INSTALL_DIR/$BINARY" "$ASSET_URL"
+else
+    echo -e "${RED}❌ Error: You need 'curl' or 'wget' installed to download.${NC}"
     exit 1
 fi
 
-# Go Mod setup
-if [ ! -f "go.mod" ]; then
-    echo -e "${BLUE}⚙️  Initializing Go module...${NC}"
-    go mod init husk
-    go get gopkg.in/yaml.v3
-    go get github.com/jensbirk/husk
-fi
+# 4. Make Executable
+chmod +x "$INSTALL_DIR/$BINARY"
 
-# Build
-echo -e "${BLUE}🔨 Building Husk...${NC}"
-go build -ldflags="-s -w" -o husk main.go
-
-# Install
-INSTALL_DIR="$HOME/.local/bin"
-mkdir -p "$INSTALL_DIR"
-echo -e "${BLUE}📂 Installing to $INSTALL_DIR...${NC}"
-mv husk "$INSTALL_DIR/"
-
-# Migrate Config if needed
-if [ -f "nixey.yaml" ] && [ ! -f "husk.yaml" ]; then
-    echo -e "${BLUE}🔄 Detected nixey.yaml. Renaming to husk.yaml...${NC}"
-    mv nixey.yaml husk.yaml
-fi
-
-# Check Path
-if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
-    echo -e "${RED}⚠️  Warning: $INSTALL_DIR is not in your PATH.${NC}"
+# 5. Verify Installation
+if [ -f "$INSTALL_DIR/$BINARY" ]; then
+    echo -e "${GREEN}✅ Installed to $INSTALL_DIR/$BINARY${NC}"
 else
-    echo -e "${GREEN}✅ Installed successfully!${NC}"
+    echo -e "${RED}❌ Installation failed.${NC}"
+    exit 1
+fi
+
+# 6. Check PATH
+if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
+    echo ""
+    echo -e "${RED}⚠️  Warning: $INSTALL_DIR is not in your PATH.${NC}"
+    echo "   Add the following line to your ~/.bashrc or ~/.zshrc:"
+    echo -e "   ${BLUE}export PATH=\"\$HOME/.local/bin:\$PATH\"${NC}"
 fi
 
 echo ""
-echo -e "🚀 Usage: ${GREEN}husk install${NC}"
+echo -e "🚀 Run it with: ${GREEN}husk install${NC}"

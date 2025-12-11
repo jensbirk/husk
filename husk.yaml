@@ -1,3 +1,4 @@
+# example husk.yaml
 packages:
   - ripgrep
   - neovim:
