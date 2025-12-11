@@ -89,7 +89,11 @@ func main() {
 
 	switch os.Args[1] {
 	case "install", "sync":
-		runSync()
+		manifestPath := ManifestFile // Default to "husk.yaml"
+		if len(os.Args) > 2 {
+			manifestPath = os.Args[2]
+		}
+		runSync(manifestPath)
 	case "help":
 		printHelp()
 	default:
@@ -100,19 +104,25 @@ func main() {
 }
 
 func printHelp() {
-	fmt.Println("Usage: husk <command>")
+	fmt.Println("Usage: husk <command> [arguments]")
 	fmt.Println("")
 	fmt.Println("Commands:")
-	fmt.Println("  install   Install/Sync packages from husk.yaml")
-	fmt.Println("  help      Show this help message")
+	fmt.Println("  install [path]   Install/Sync packages. Optional: path to husk.yaml")
+	fmt.Println("  help             Show this help message")
 }
 
-func runSync() {
+func runSync(manifestPath string) {
 	checkEnv()
 
-	data, err := os.ReadFile(ManifestFile)
+	// Update BaseDir to the directory of the manifest file so relative paths in yaml work
+	absPath, absErr := filepath.Abs(manifestPath)
+	if absErr == nil {
+		BaseDir = filepath.Dir(absPath)
+	}
+
+	data, err := os.ReadFile(manifestPath)
 	if err != nil {
-		fmt.Printf("⚠️  %s not found in current directory.\n", ManifestFile)
+		fmt.Printf("⚠️  %s not found.\n", manifestPath)
 		return
 	}
 	var m Manifest
@@ -156,7 +166,9 @@ func runSync() {
 	}
 
 	// 2. Load Lockfile
-	lockData, _ := os.ReadFile(LockFile)
+	// We look for husk.lock in the same directory as the manifest
+	lockPath := filepath.Join(BaseDir, LockFile)
+	lockData, _ := os.ReadFile(lockPath)
 	var lock LockFileStruct
 	json.Unmarshal(lockData, &lock)
 	if lock.Packages == nil {
@@ -176,7 +188,7 @@ func runSync() {
 		clos       map[string]ClosureItem
 	}, len(nixCandidates))
 
-	fmt.Printf("🧩 Resolving %d packages...\n", len(nixCandidates))
+	fmt.Printf("🧩 Resolving %d packages from %s...\n", len(nixCandidates), manifestPath)
 
 	for name, cfg := range nixCandidates {
 		wg.Add(1)
@@ -288,7 +300,7 @@ func runSync() {
 		Files:    newFiles,
 	}
 	lBytes, _ := json.MarshalIndent(finalLock, "", "  ")
-	os.WriteFile(LockFile, lBytes, 0644)
+	os.WriteFile(lockPath, lBytes, 0644)
 
 	fmt.Println("\n✅ System Synchronized.")
 }
@@ -714,6 +726,7 @@ func manageDotfiles(pkgs map[string]PkgConfig, lockedFiles map[string]string) ma
 		if len(parts) > 1 {
 			dest = parts[1]
 		}
+		// BaseDir is now updated to the manifest directory
 		absSrc := filepath.Join(BaseDir, strings.TrimSpace(src))
 		absDest := filepath.Join(os.Getenv("HOME"), strings.TrimSpace(dest))
 		if _, err := os.Stat(absSrc); err == nil {
@@ -778,7 +791,7 @@ func cleanupStaleWrappers(validPaths []string) {
 				end := strings.IndexAny(rest, "\" \n")
 				if end != -1 {
 					storePath := rest[:end]
-					
+
 					// Check if the storePath starts with any valid path
 					found := false
 					for valid := range validMap {
@@ -787,7 +800,7 @@ func cleanupStaleWrappers(validPaths []string) {
 							break
 						}
 					}
-					
+
 					if !found {
 						fmt.Printf("🧹 Removing stale wrapper: %s\n", f.Name())
 						os.Remove(path)
