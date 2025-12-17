@@ -13,8 +13,12 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"sort"
+	"strconv"
 	"strings"
 	"sync"
+	"syscall"
+	"time"
 
 	"github.com/ulikunitz/xz"
 	"gopkg.in/yaml.v3"
@@ -22,23 +26,25 @@ import (
 
 // --- Configuration ---
 const (
-	StoreDir      = "/nix/store"
-	CacheURL      = "https://cache.nixos.org"
-	System        = "x86_64-linux"
-	DefaultWorkes = 4
+	StoreDir       = "/nix/store"
+	CacheURL       = "https://cache.nixos.org"
+	System         = "x86_64-linux"
+	DefaultWorkers = 4
 )
 
 // Configuration Variables
 var (
-	ManifestFile   = "husk.yaml"
-	LockFile       = "husk.lock"
-	BinDir         = os.ExpandEnv("$HOME/.local/bin")
-	ShareDir       = os.ExpandEnv("$HOME/.local/share")
-	GLHacksDir     = os.ExpandEnv("$HOME/.local/share/husk/gl-hacks")
-	SystemdUserDir = os.ExpandEnv("$HOME/.config/systemd/user")
-	EnvDir         = os.ExpandEnv("$HOME/.config/husk")
-	BaseDir, _     = os.Getwd()
-	Channels       = map[string]string{
+	ManifestFile    = "husk.yaml"
+	LockFile        = "husk.lock"
+	BinDir          = os.ExpandEnv("$HOME/.local/bin")
+	ShareDir        = os.ExpandEnv("$HOME/.local/share")
+	GLHacksDir      = os.ExpandEnv("$HOME/.local/share/husk/gl-hacks")
+	SystemdUserDir  = os.ExpandEnv("$HOME/.config/systemd/user")
+	EnvDir          = os.ExpandEnv("$HOME/.config/husk")
+	StateDir        = os.ExpandEnv("$HOME/.local/state/husk")
+	GenerationsDir  = filepath.Join(StateDir, "generations")
+	BaseDir, _      = os.Getwd()
+	DefaultChannels = map[string]string{
 		"unstable": "https://hydra.nixos.org/job/nixpkgs/trunk",
 		"stable":   "https://hydra.nixos.org/job/nixos/release-23.11/nixpkgs",
 	}
@@ -47,6 +53,7 @@ var (
 // --- Structs ---
 
 type Manifest struct {
+	Channels map[string]string `yaml:"channels"`
 	Packages []interface{}     `yaml:"packages"`
 	GUIs     []interface{}     `yaml:"guis"`
 	Env      map[string]string `yaml:"env"`
@@ -87,17 +94,36 @@ func main() {
 		os.Exit(0)
 	}
 
-	switch os.Args[1] {
+	cmd := os.Args[1]
+	manifestPath := ManifestFile
+	if len(os.Args) > 2 && !strings.HasPrefix(os.Args[2], "-") {
+		manifestPath = os.Args[2]
+	}
+
+	switch cmd {
 	case "install", "sync":
-		manifestPath := ManifestFile // Default to "husk.yaml"
-		if len(os.Args) > 2 {
-			manifestPath = os.Args[2]
-		}
 		runSync(manifestPath)
+	case "shell", "dev":
+		runShell(manifestPath)
+	case "generations", "list-generations":
+		listGenerations()
+	case "rollback":
+		rollbackGeneration()
+	case "switch-generation":
+		if len(os.Args) < 3 {
+			fmt.Println("Usage: husk switch-generation <id>")
+			os.Exit(1)
+		}
+		id, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			fmt.Println("Invalid generation ID")
+			os.Exit(1)
+		}
+		switchGeneration(id)
 	case "help":
 		printHelp()
 	default:
-		fmt.Printf("Unknown command: %s\n", os.Args[1])
+		fmt.Printf("Unknown command: %s\n", cmd)
 		printHelp()
 		os.Exit(1)
 	}
@@ -107,31 +133,312 @@ func printHelp() {
 	fmt.Println("Usage: husk <command> [arguments]")
 	fmt.Println("")
 	fmt.Println("Commands:")
-	fmt.Println("  install [path]   Install/Sync packages. Optional: path to husk.yaml")
-	fmt.Println("  help             Show this help message")
+	fmt.Println("  install [path]       Install/Sync packages globally. Optional: path to husk.yaml")
+	fmt.Println("  shell [path]         Start a shell with packages from husk.yaml (flake-like)")
+	fmt.Println("  generations          List available generations")
+	fmt.Println("  rollback             Rollback to the previous generation")
+	fmt.Println("  switch-generation <id> Switch to a specific generation")
+	fmt.Println("  help                 Show this help message")
 }
+
+// --- Commands ---
 
 func runSync(manifestPath string) {
 	checkEnv()
+	updateBaseDir(manifestPath)
 
-	// Update BaseDir to the directory of the manifest file so relative paths in yaml work
-	absPath, absErr := filepath.Abs(manifestPath)
-	if absErr == nil {
-		BaseDir = filepath.Dir(absPath)
-	}
-
-	data, err := os.ReadFile(manifestPath)
+	m, err := loadManifest(manifestPath)
 	if err != nil {
-		fmt.Printf("⚠️  %s not found.\n", manifestPath)
+		fmt.Printf("⚠️  %s not found or invalid.\n", manifestPath)
 		return
 	}
-	var m Manifest
-	yaml.Unmarshal(data, &m)
 
-	// 1. Parse Inputs
+	lock, _ := loadLockFile(filepath.Join(BaseDir, LockFile))
+
+	// Resolve & Install
+	newPkgs, needed, err := resolveAndInstall(m, lock)
+	if err != nil {
+		fmt.Printf("❌ Installation failed: %v\n", err)
+		return
+	}
+
+	// Flatpaks
+	fm := NewFlatpakManager()
+	fm.EnsureRemote()
+	flatPkgs := parseFlatpaks(m)
+	fm.InstallAndPrune(flatPkgs)
+
+	// Dotfiles
+	newFiles := manageDotfiles(m, lock.Files)
+
+	// Linking
+	createGLEnv()
+	for _, path := range newPkgs {
+		linkBinaries(path)
+		linkDesktop(path)
+	}
+
+	// Cleanup
+	var validPaths []string
+	for _, p := range newPkgs {
+		validPaths = append(validPaths, p)
+	}
+	cleanupStaleWrappers(validPaths)
+
+	// Global Env File
+	envContent := "export XDG_DATA_DIRS=$HOME/.local/share:$XDG_DATA_DIRS\n"
+	for k, v := range m.Env {
+		envContent += fmt.Sprintf("export %s=\"%s\"\n", k, v)
+	}
+	os.WriteFile(filepath.Join(EnvDir, "env.sh"), []byte(envContent), 0644)
+
+	// Save Lock
+	finalLock := LockFileStruct{
+		Packages: newPkgs,
+		Closure:  needed,
+		Files:    newFiles,
+	}
+	saveLockFile(filepath.Join(BaseDir, LockFile), newPkgs, needed, newFiles)
+
+	// Save Generation
+	if err := saveGeneration(m, &finalLock); err != nil {
+		fmt.Printf("⚠️  Failed to save generation: %v\n", err)
+	} else {
+		fmt.Println("💾 Generation saved.")
+	}
+
+	fmt.Println("\n✅ System Synchronized.")
+}
+
+func runShell(manifestPath string) {
+	updateBaseDir(manifestPath)
+
+	m, err := loadManifest(manifestPath)
+	if err != nil {
+		fmt.Printf("⚠️  %s not found or invalid.\n", manifestPath)
+		return
+	}
+
+	lock, _ := loadLockFile(filepath.Join(BaseDir, LockFile))
+
+	newPkgs, needed, err := resolveAndInstall(m, lock)
+	if err != nil {
+		fmt.Printf("❌ Setup failed: %v\n", err)
+		return
+	}
+
+	saveLockFile(filepath.Join(BaseDir, LockFile), newPkgs, needed, lock.Files)
+
+	// Construct Environment
+	newEnv := os.Environ()
+	pathVar := os.Getenv("PATH")
+
+	var paths []string
+	for _, storePath := range newPkgs {
+		binPath := filepath.Join(storePath, "bin")
+		if _, err := os.Stat(binPath); err == nil {
+			paths = append(paths, binPath)
+		}
+	}
+	newPath := strings.Join(paths, string(os.PathListSeparator))
+	if pathVar != "" {
+		newPath = newPath + string(os.PathListSeparator) + pathVar
+	}
+
+	envMap := make(map[string]string)
+	for _, e := range newEnv {
+		parts := strings.SplitN(e, "=", 2)
+		if len(parts) == 2 {
+			envMap[parts[0]] = parts[1]
+		}
+	}
+	envMap["PATH"] = newPath
+	for k, v := range m.Env {
+		envMap[k] = v
+	}
+
+	var finalEnv []string
+	for k, v := range envMap {
+		finalEnv = append(finalEnv, fmt.Sprintf("%s=%s", k, v))
+	}
+
+	shell := os.Getenv("SHELL")
+	if shell == "" {
+		shell = "/bin/sh"
+	}
+
+	fmt.Printf("🚀 Entering husk shell...\n")
+	execErr := syscall.Exec(shell, []string{shell}, finalEnv)
+	if execErr != nil {
+		fmt.Printf("Failed to spawn shell: %v\n", execErr)
+	}
+}
+
+// --- Generations Logic ---
+
+func listGenerations() {
+	if _, err := os.Stat(GenerationsDir); os.IsNotExist(err) {
+		fmt.Println("No generations found.")
+		return
+	}
+	entries, err := os.ReadDir(GenerationsDir)
+	if err != nil {
+		fmt.Printf("Error reading generations: %v\n", err)
+		return
+	}
+
+	var ids []int
+	for _, e := range entries {
+		if e.IsDir() {
+			if id, err := strconv.Atoi(e.Name()); err == nil {
+				ids = append(ids, id)
+			}
+		}
+	}
+	sort.Ints(ids)
+
+	fmt.Printf("%-5s %-20s\n", "ID", "Date")
+	for _, id := range ids {
+		info, err := os.Stat(filepath.Join(GenerationsDir, strconv.Itoa(id)))
+		date := "Unknown"
+		if err == nil {
+			date = info.ModTime().Format(time.RFC822)
+		}
+		fmt.Printf("%-5d %-20s\n", id, date)
+	}
+}
+
+func saveGeneration(m *Manifest, lock *LockFileStruct) error {
+	os.MkdirAll(GenerationsDir, 0755)
+
+	entries, _ := os.ReadDir(GenerationsDir)
+	maxID := 0
+	for _, e := range entries {
+		if id, err := strconv.Atoi(e.Name()); err == nil {
+			if id > maxID {
+				maxID = id
+			}
+		}
+	}
+	newID := maxID + 1
+	genPath := filepath.Join(GenerationsDir, strconv.Itoa(newID))
+	os.MkdirAll(genPath, 0755)
+
+	// Save Manifest
+	mData, _ := yaml.Marshal(m)
+	os.WriteFile(filepath.Join(genPath, "husk.yaml"), mData, 0644)
+
+	// Save Lock
+	lData, _ := json.MarshalIndent(lock, "", "  ")
+	os.WriteFile(filepath.Join(genPath, "husk.lock"), lData, 0644)
+
+	return nil
+}
+
+func rollbackGeneration() {
+	entries, _ := os.ReadDir(GenerationsDir)
+	var ids []int
+	for _, e := range entries {
+		if id, err := strconv.Atoi(e.Name()); err == nil {
+			ids = append(ids, id)
+		}
+	}
+	sort.Ints(ids)
+
+	if len(ids) < 2 {
+		fmt.Println("No previous generation to rollback to.")
+		return
+	}
+
+	prevID := ids[len(ids)-2] // Current is usually the last one
+	switchGeneration(prevID)
+}
+
+func switchGeneration(id int) {
+	genPath := filepath.Join(GenerationsDir, strconv.Itoa(id))
+	if _, err := os.Stat(genPath); os.IsNotExist(err) {
+		fmt.Printf("Generation %d not found.\n", id)
+		return
+	}
+
+	fmt.Printf("🔄 Switching to generation %d...\n", id)
+
+	// Load from generation
+	manifestPath := filepath.Join(genPath, "husk.yaml")
+	lockPath := filepath.Join(genPath, "husk.lock")
+
+	m, err := loadManifest(manifestPath)
+	if err != nil {
+		fmt.Println("Error loading generation manifest.")
+		return
+	}
+	lock, _ := loadLockFile(lockPath)
+
+	// We set BaseDir to the generation path so config linking works relative to it?
+	// Actually, config linking relies on relative paths in husk.yaml.
+	// If the user used relative paths like "./configs/nvim", those won't exist in the generation folder.
+	// This is a limitation of not copying the whole config tree.
+	// For now, we update BaseDir to the original working dir (or keep it as is)?
+	// Let's assume BaseDir is where the user invoked us, but that might be wrong for rollback.
+	// Ideally, generations should be self-contained or we skip config linking if src missing.
+
+	// Re-run installation
+	newPkgs, _, err := resolveAndInstall(m, lock)
+	if err != nil {
+		fmt.Printf("❌ Install failed: %v\n", err)
+		return
+	}
+
+	// Flatpaks
+	fm := NewFlatpakManager()
+	fm.EnsureRemote()
+	flatPkgs := parseFlatpaks(m)
+	fm.InstallAndPrune(flatPkgs)
+
+	// Dotfiles
+	// Warning: This might fail if source files are missing.
+	// We'll proceed with best effort.
+	// We might need to store the "original base dir" in the generation metadata if we want to support this properly.
+	manageDotfiles(m, lock.Files)
+
+	// Linking
+	createGLEnv()
+	for _, path := range newPkgs {
+		linkBinaries(path)
+		linkDesktop(path)
+	}
+
+	// Cleanup
+	var validPaths []string
+	for _, p := range newPkgs {
+		validPaths = append(validPaths, p)
+	}
+	cleanupStaleWrappers(validPaths)
+
+	// Env
+	envContent := "export XDG_DATA_DIRS=$HOME/.local/share:$XDG_DATA_DIRS\n"
+	for k, v := range m.Env {
+		envContent += fmt.Sprintf("export %s=\"%s\"\n", k, v)
+	}
+	os.WriteFile(filepath.Join(EnvDir, "env.sh"), []byte(envContent), 0644)
+
+	fmt.Printf("✅ Switched to generation %d.\n", id)
+}
+
+// --- Core Logic ---
+
+func resolveAndInstall(m *Manifest, lock LockFileStruct) (map[string]string, map[string]ClosureItem, error) {
+	// Merge Channels
+	channels := make(map[string]string)
+	for k, v := range DefaultChannels {
+		channels[k] = v
+	}
+	for k, v := range m.Channels {
+		channels[k] = v
+	}
+
+	// Parse Inputs
 	nixCandidates := make(map[string]PkgConfig)
-	var flatPkgs []string
-
 	for _, p := range m.Packages {
 		if name, ok := p.(string); ok {
 			nixCandidates[name] = PkgConfig{Channel: "unstable"}
@@ -148,37 +455,7 @@ func runSync(manifestPath string) {
 		}
 	}
 
-	fm := NewFlatpakManager()
-	fm.EnsureRemote()
-	for _, g := range m.GUIs {
-		if name, ok := g.(string); ok {
-			flatPkgs = append(flatPkgs, name)
-		} else if gMap, ok := g.(map[string]interface{}); ok {
-			for _, rawCfg := range gMap {
-				b, _ := yaml.Marshal(rawCfg)
-				var cfg PkgConfig
-				yaml.Unmarshal(b, &cfg)
-				if cfg.ID != "" {
-					flatPkgs = append(flatPkgs, cfg.ID)
-				}
-			}
-		}
-	}
-
-	// 2. Load Lockfile
-	// We look for husk.lock in the same directory as the manifest
-	lockPath := filepath.Join(BaseDir, LockFile)
-	lockData, _ := os.ReadFile(lockPath)
-	var lock LockFileStruct
-	json.Unmarshal(lockData, &lock)
-	if lock.Packages == nil {
-		lock.Packages = make(map[string]string)
-	}
-	if lock.Closure == nil {
-		lock.Closure = make(map[string]ClosureItem)
-	}
-
-	// 3. Resolve Nix Dependencies
+	// Resolve Nix Dependencies
 	newPkgs := make(map[string]string)
 	newClos := make(map[string]ClosureItem)
 
@@ -188,22 +465,26 @@ func runSync(manifestPath string) {
 		clos       map[string]ClosureItem
 	}, len(nixCandidates))
 
-	fmt.Printf("🧩 Resolving %d packages from %s...\n", len(nixCandidates), manifestPath)
+	fmt.Printf("🧩 Resolving %d packages...\n", len(nixCandidates))
 
 	for name, cfg := range nixCandidates {
 		wg.Add(1)
 		go func(n string, c PkgConfig) {
 			defer wg.Done()
-			url := Channels[c.Channel]
+			url := channels[c.Channel]
 			if url == "" {
-				url = Channels["unstable"]
+				url = channels["unstable"]
 			}
 			pn, path, clos := queryHydraClosure(n, url, c.Build)
 			if path != "" {
 				resChan <- struct {
 					name, path string
 					clos       map[string]ClosureItem
-				}{pn, path, clos}
+				}{
+					name: pn,
+					path: path,
+					clos: clos,
+				}
 			} else {
 				fmt.Printf("❌ Failed to resolve: %s\n", n)
 			}
@@ -220,15 +501,16 @@ func runSync(manifestPath string) {
 		for k, v := range res.clos {
 			newClos[k] = v
 		}
-		fmt.Printf("   ✅ Resolved: %s\n", res.name)
 	}
 
-	// 4. Calculate Downloads
+	// Calculate Downloads
 	needed := make(map[string]ClosureItem)
 	stack := []string{}
 	for _, path := range newPkgs {
 		stack = append(stack, extractHash(path))
 	}
+
+	// Closure traversal
 	for len(stack) > 0 {
 		h := stack[len(stack)-1]
 		stack = stack[:len(stack)-1]
@@ -238,20 +520,35 @@ func runSync(manifestPath string) {
 				for _, ref := range item.References {
 					stack = append(stack, extractHash(ref))
 				}
+			} else if item, ok := lock.Closure[h]; ok {
+				needed[h] = item
+				for _, ref := range item.References {
+					stack = append(stack, extractHash(ref))
+				}
 			}
 		}
 	}
 
-	// 5. Download & Install
-	if len(needed) > 0 {
-		fmt.Printf("⬇️  Downloading/Verifying %d store items...\n", len(needed))
-		tasks := make(chan ClosureItem, len(needed))
-		for _, item := range needed {
+	// Download & Install
+	toDownload := make(map[string]ClosureItem)
+	for h, item := range needed {
+		// Check if exists on disk
+		storeName := filepath.Base(item.StorePath)
+		destPath := filepath.Join(StoreDir, storeName)
+		if _, err := os.Stat(destPath); os.IsNotExist(err) {
+			toDownload[h] = item
+		}
+	}
+
+	if len(toDownload) > 0 {
+		fmt.Printf("⬇️  Downloading %d store items...\n", len(toDownload))
+		tasks := make(chan ClosureItem, len(toDownload))
+		for _, item := range toDownload {
 			tasks <- item
 		}
 		close(tasks)
 
-		workers := DefaultWorkes
+		workers := DefaultWorkers
 		if n := runtime.NumCPU(); n > workers {
 			workers = n
 		}
@@ -268,41 +565,70 @@ func runSync(manifestPath string) {
 		installWg.Wait()
 	}
 
-	// 6. Dotfiles & Flatpaks
-	newFiles := manageDotfiles(nixCandidates, lock.Files)
-	fm.InstallAndPrune(flatPkgs)
+	return newPkgs, needed, nil
+}
 
-	// 7. Linking & Cleanup
-	createGLEnv()
-	for _, path := range newPkgs {
-		linkBinaries(path)
-		linkDesktop(path)
+// --- Helpers ---
+
+func updateBaseDir(manifestPath string) {
+	absPath, absErr := filepath.Abs(manifestPath)
+	if absErr == nil {
+		BaseDir = filepath.Dir(absPath)
 	}
+}
 
-	// Run the garbage collector to remove binaries for packages no longer in newPkgs
-	var validPaths []string
-	for _, p := range newPkgs {
-		validPaths = append(validPaths, p)
+func loadManifest(path string) (*Manifest, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
 	}
-	cleanupStaleWrappers(validPaths)
+	var m Manifest
+	err = yaml.Unmarshal(data, &m)
+	return &m, err
+}
 
-	// 8. Generate Env File
-	envContent := "export XDG_DATA_DIRS=$HOME/.local/share:$XDG_DATA_DIRS\n"
-	for k, v := range m.Env {
-		envContent += fmt.Sprintf("export %s=\"%s\"\n", k, v)
+func loadLockFile(path string) (LockFileStruct, error) {
+	lockData, err := os.ReadFile(path)
+	var lock LockFileStruct
+	if err == nil {
+		json.Unmarshal(lockData, &lock)
 	}
-	os.WriteFile(filepath.Join(EnvDir, "env.sh"), []byte(envContent), 0644)
+	if lock.Packages == nil {
+		lock.Packages = make(map[string]string)
+	}
+	if lock.Closure == nil {
+		lock.Closure = make(map[string]ClosureItem)
+	}
+	return lock, nil
+}
 
-	// 9. Save Lock
+func saveLockFile(path string, pkgs map[string]string, closure map[string]ClosureItem, files map[string]string) {
 	finalLock := LockFileStruct{
-		Packages: newPkgs,
-		Closure:  needed,
-		Files:    newFiles,
+		Packages: pkgs,
+		Closure:  closure,
+		Files:    files,
 	}
 	lBytes, _ := json.MarshalIndent(finalLock, "", "  ")
-	os.WriteFile(lockPath, lBytes, 0644)
+	os.WriteFile(path, lBytes, 0644)
+}
 
-	fmt.Println("\n✅ System Synchronized.")
+func parseFlatpaks(m *Manifest) []string {
+	var flatPkgs []string
+	for _, g := range m.GUIs {
+		if name, ok := g.(string); ok {
+			flatPkgs = append(flatPkgs, name)
+		} else if gMap, ok := g.(map[string]interface{}); ok {
+			for _, rawCfg := range gMap {
+				b, _ := yaml.Marshal(rawCfg)
+				var cfg PkgConfig
+				yaml.Unmarshal(b, &cfg)
+				if cfg.ID != "" {
+					flatPkgs = append(flatPkgs, cfg.ID)
+				}
+			}
+		}
+	}
+	return flatPkgs
 }
 
 // --- Utilities ---
@@ -313,7 +639,7 @@ func checkEnv() {
 		fmt.Println("   sudo mkdir -p /nix/store && sudo chown -R $USER /nix/store")
 		os.Exit(1)
 	}
-	dirs := []string{BinDir, ShareDir, SystemdUserDir, EnvDir}
+	dirs := []string{BinDir, ShareDir, SystemdUserDir, EnvDir, GenerationsDir}
 	for _, d := range dirs {
 		os.MkdirAll(d, 0755)
 	}
@@ -396,7 +722,13 @@ func queryHydraClosure(pkgName, channelURL, buildScript string) (string, string,
 	if !ok {
 		return pkgName, "", nil
 	}
-	out, ok := outputs["out"].(map[string]interface{})
+
+	targetOutput := "out"
+	if _, hasBin := outputs["bin"]; hasBin {
+		targetOutput = "bin"
+	}
+
+	out, ok := outputs[targetOutput].(map[string]interface{})
 	if !ok {
 		return pkgName, "", nil
 	}
@@ -714,9 +1046,24 @@ func linkDesktop(storePath string) {
 	})
 }
 
-func manageDotfiles(pkgs map[string]PkgConfig, lockedFiles map[string]string) map[string]string {
+func manageDotfiles(m *Manifest, lockedFiles map[string]string) map[string]string {
+	// Parse candidates
+	nixCandidates := make(map[string]PkgConfig)
+	for _, p := range m.Packages {
+		if name, ok := p.(string); ok {
+			nixCandidates[name] = PkgConfig{}
+		} else if pMap, ok := p.(map[string]interface{}); ok {
+			for name, rawCfg := range pMap {
+				b, _ := yaml.Marshal(rawCfg)
+				var cfg PkgConfig
+				yaml.Unmarshal(b, &cfg)
+				nixCandidates[name] = cfg
+			}
+		}
+	}
+
 	newFiles := make(map[string]string)
-	for _, cfg := range pkgs {
+	for _, cfg := range nixCandidates {
 		if cfg.Config == "" {
 			continue
 		}
