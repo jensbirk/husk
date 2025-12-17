@@ -122,6 +122,12 @@ func main() {
 		switchGeneration(id)
 	case "gc":
 		runGC()
+	case "search":
+		if len(os.Args) < 3 {
+			fmt.Println("Usage: husk search <term>")
+			os.Exit(1)
+		}
+		runSearch(os.Args[2])
 	case "help":
 		printHelp()
 	default:
@@ -141,6 +147,7 @@ func printHelp() {
 	fmt.Println("  rollback             Rollback to the previous generation")
 	fmt.Println("  switch-generation <id> Switch to a specific generation")
 	fmt.Println("  gc                   Garbage collect unused store paths")
+	fmt.Println("  search <term>        Search for packages (via Repology/Nix Unstable)")
 	fmt.Println("  help                 Show this help message")
 }
 
@@ -1234,5 +1241,81 @@ func formatBytes(b int64) string {
 		exp++
 	}
 	return fmt.Sprintf("%.1f %ciB", float64(b)/float64(div), "KMGTPE"[exp])
+}
+
+// --- Search ---
+
+type RepologyItem struct {
+	Repo        string `json:"repo"`
+	SrcName     string `json:"srcname"`
+	Version     string `json:"version"`
+	Summary     string `json:"summary"`
+	VisibleName string `json:"visiblename"`
+}
+
+func runSearch(term string) {
+	fmt.Printf("🔍 Searching for '%s' in nix_unstable...\n", term)
+	
+	url := fmt.Sprintf("https://repology.org/api/v1/projects/?search=%s&inrepo=nix_unstable", term)
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Set("User-Agent", "husk-cli/0.0.1 (github.com/jensbirk/husk)")
+	
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Printf("❌ Search failed: %v\n", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		fmt.Printf("❌ Search API error: %s\n", resp.Status)
+		return
+	}
+
+	// Repology returns a map: "pkgname" -> [list of versions/repos]
+	// Since we filtered by inrepo=nix_unstable, we should get relevant entries.
+	var results map[string][]RepologyItem
+	if err := json.NewDecoder(resp.Body).Decode(&results); err != nil {
+		fmt.Printf("❌ Failed to parse results: %v\n", err)
+		return
+	}
+
+	if len(results) == 0 {
+		fmt.Println("No results found.")
+		return
+	}
+
+	// Flatten and Sort
+	var hits []RepologyItem
+	for _, items := range results {
+		for _, item := range items {
+			if item.Repo == "nix_unstable" {
+				hits = append(hits, item)
+			}
+		}
+	}
+	
+	// Sort by SrcName (package name)
+	sort.Slice(hits, func(i, j int) bool {
+		return hits[i].SrcName < hits[j].SrcName
+	})
+
+	fmt.Printf("%-30s %-15s %s\n", "Package", "Version", "Description")
+	fmt.Println(strings.Repeat("-", 80))
+	
+	count := 0
+	for _, h := range hits {
+		desc := h.Summary
+		if len(desc) > 50 {
+			desc = desc[:47] + "..."
+		}
+		fmt.Printf("%-30s %-15s %s\n", h.SrcName, h.Version, desc)
+		count++
+		if count >= 20 {
+			fmt.Println("... (more results hidden)")
+			break
+		}
+	}
 }
 

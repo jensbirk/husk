@@ -1,5 +1,13 @@
 channels:
   unstable: "https://hydra.nixos.org/job/nixpkgs/trunk"
+  stable: "https://hydra.nixos.org/job/nixos/release-23.11/nixpkgs"
 
 packages:
   - ripgrep
+  - go:
+      channel: unstable
+  - neovim:
+      config: ./configs/neovim:.config/nvim
+
+env:
+  EDITOR: neovim
