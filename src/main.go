@@ -187,6 +187,14 @@ func main() {
 			os.Exit(1)
 		}
 		runSync(ManifestFile)
+	case "hook":
+		if len(os.Args) < 3 {
+			fmt.Println("Usage: husk hook <bash|zsh>")
+			os.Exit(1)
+		}
+		runHook(os.Args[2])
+	case "activate":
+		runActivate()
 	case "help":
 		printHelp()
 	default:
@@ -1405,6 +1413,155 @@ func removePackages(pkgsToRemove []string) error {
 		return err
 	}
 	return os.WriteFile(ManifestFile, data, 0644)
+}
+
+// --- Autoload / Hook ---
+
+func runHook(shell string) {
+	switch shell {
+	case "bash":
+		fmt.Println(`_husk_hook() {
+  eval "$(husk activate)"
+};
+if [[ "$PROMPT_COMMAND" != *"_husk_hook"* ]]; then
+  export PROMPT_COMMAND="_husk_hook;$PROMPT_COMMAND"
+fi`)
+	case "zsh":
+		fmt.Println(`_husk_hook() {
+  eval "$(husk activate)"
+}
+typeset -a precmd_functions
+if [[ -z ${precmd_functions[(r)_husk_hook]} ]]; then
+  precmd_functions+=(_husk_hook)
+fi`)
+	default:
+		fmt.Println("Unsupported shell. Supported: bash, zsh")
+		os.Exit(1)
+	}
+}
+
+func runActivate() {
+	cwd, _ := os.Getwd()
+	activeRoot := os.Getenv("HUSK_ACTIVE")
+	projectRoot, found := findProjectRoot(cwd)
+
+	// Helper to print export commands
+	printExport := func(key, value string) {
+		fmt.Printf("export %s=\"%s\"\n", key, value)
+	}
+	printUnset := func(key string) {
+		fmt.Printf("unset %s\n", key)
+	}
+
+	// Case 1: Already active in the correct root
+	if found && activeRoot == projectRoot {
+		return // Do nothing
+	}
+
+	// Case 2: Leaving an active project (Deactivate)
+	if activeRoot != "" && activeRoot != projectRoot {
+		// Restore PATH
+		oldPath := os.Getenv("HUSK_OLD_PATH")
+		if oldPath != "" {
+			printExport("PATH", oldPath)
+			printUnset("HUSK_OLD_PATH")
+		}
+		
+		// Restore other envs
+		// (Simple restoration for now: look for HUSK_OLD_ENV_ prefix in current env is hard in Go without iterating all)
+		// We iterate os.Environ() to find backups
+		for _, e := range os.Environ() {
+			if strings.HasPrefix(e, "HUSK_OLD_ENV_") {
+				parts := strings.SplitN(e, "=", 2)
+				key := parts[0]
+				val := parts[1]
+				origKey := strings.TrimPrefix(key, "HUSK_OLD_ENV_")
+				printExport(origKey, val)
+				printUnset(key)
+			}
+		}
+
+		printUnset("HUSK_ACTIVE")
+		// Continue to see if we need to activate a new one
+	}
+
+	// Case 3: Activate new project
+	if found {
+		lockPath := filepath.Join(projectRoot, LockFile)
+		manifestPath := filepath.Join(projectRoot, ManifestFile)
+
+		// We need lockfile for speed and safety
+		if _, err := os.Stat(lockPath); os.IsNotExist(err) {
+			// Print to stderr so it doesn't break eval
+			fmt.Fprintf(os.Stderr, "husk: Found husk.yaml but no lockfile. Run 'husk install' to enable autoload.\n")
+			return
+		}
+
+		lock, err := loadLockFile(lockPath)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "husk: Error loading lockfile: %v\n", err)
+			return
+		}
+
+		// Verify store paths exist
+		var paths []string
+		missing := false
+		for _, storePath := range lock.Packages {
+			if _, err := os.Stat(storePath); os.IsNotExist(err) {
+				missing = true
+				break
+			}
+			binPath := filepath.Join(storePath, "bin")
+			if _, err := os.Stat(binPath); err == nil {
+				paths = append(paths, binPath)
+			}
+		}
+
+		if missing {
+			fmt.Fprintf(os.Stderr, "husk: Some packages are missing. Run 'husk install'.\n")
+			return
+		}
+
+		// Load manifest for Env vars
+		m, err := loadManifest(manifestPath)
+		if err == nil {
+			for k, v := range m.Env {
+				// Backup existing
+				if currVal, exists := os.LookupEnv(k); exists {
+					printExport("HUSK_OLD_ENV_"+k, currVal)
+				}
+				printExport(k, v)
+			}
+		}
+
+		// Construct new PATH
+		currentPath := os.Getenv("PATH")
+		newPath := strings.Join(paths, string(os.PathListSeparator))
+		if currentPath != "" {
+			newPath = newPath + string(os.PathListSeparator) + currentPath
+		}
+
+		printExport("HUSK_OLD_PATH", currentPath)
+		printExport("PATH", newPath)
+		printExport("HUSK_ACTIVE", projectRoot)
+		
+		fmt.Fprintf(os.Stderr, "husk: Loaded environment from %s\n", projectRoot)
+	}
+}
+
+func findProjectRoot(startDir string) (string, bool) {
+	dir := startDir
+	for {
+		if _, err := os.Stat(filepath.Join(dir, ManifestFile)); err == nil {
+			return dir, true
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return "", false
 }
 
 
