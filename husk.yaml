@@ -1,0 +1,5 @@
+channels:
+  unstable: "https://hydra.nixos.org/job/nixpkgs/trunk"
+
+packages:
+  - ripgrep

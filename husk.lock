@@ -1,0 +1,68 @@
+{
+  "packages": {
+    "ripgrep": "/nix/store/2fngznir58zqpvg2wl7iy5amlsbzhf9p-ripgrep-15.1.0"
+  },
+  "closure": {
+    "2a3izq4hffdd9r9gb2w6q2ibdc86kss6": {
+      "StorePath": "/nix/store/2a3izq4hffdd9r9gb2w6q2ibdc86kss6-xgcc-14.3.0-libgcc",
+      "URL": "nar/1125zqba8cx8wbfa632vy458a3j3xja0qpcqafsfdildyl9dqa7x.nar.xz",
+      "References": null
+    },
+    "2fngznir58zqpvg2wl7iy5amlsbzhf9p": {
+      "StorePath": "/nix/store/2fngznir58zqpvg2wl7iy5amlsbzhf9p-ripgrep-15.1.0",
+      "URL": "nar/00k93jwramlqiibsjy2dx3nlc8w00fzxx7aq1xibfzv0zsw450x9.nar.xz",
+      "References": [
+        "6y07blp88mrgn05wxbif8yzmd0g2ss4x-pcre2-10.46",
+        "xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri-gcc-14.3.0-lib",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ]
+    },
+    "3rkccxj7vi0p2a0d48c4a4z2vv2cni88": {
+      "StorePath": "/nix/store/3rkccxj7vi0p2a0d48c4a4z2vv2cni88-libunistring-1.4.1",
+      "URL": "nar/1qiiqq1297gsynq6xhcrv21l450gpgnylqahjk7bl4wvb96ca42m.nar.xz",
+      "References": [
+        "3rkccxj7vi0p2a0d48c4a4z2vv2cni88-libunistring-1.4.1"
+      ]
+    },
+    "6y07blp88mrgn05wxbif8yzmd0g2ss4x": {
+      "StorePath": "/nix/store/6y07blp88mrgn05wxbif8yzmd0g2ss4x-pcre2-10.46",
+      "URL": "nar/1gjj3hj6afclfz4662rgwdic5hdh9jxbhf0wbs1kff34sqbfsxsq.nar.xz",
+      "References": [
+        "6y07blp88mrgn05wxbif8yzmd0g2ss4x-pcre2-10.46",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ]
+    },
+    "hxcmad417fd8ql9ylx96xpak7da06yiv": {
+      "StorePath": "/nix/store/hxcmad417fd8ql9ylx96xpak7da06yiv-libidn2-2.3.8",
+      "URL": "nar/0ba31li9jzcy3sgsix34pz9kf4rgfxx4c986bzszgvs9gg6cpbnz.nar.xz",
+      "References": [
+        "3rkccxj7vi0p2a0d48c4a4z2vv2cni88-libunistring-1.4.1",
+        "hxcmad417fd8ql9ylx96xpak7da06yiv-libidn2-2.3.8"
+      ]
+    },
+    "shs2lyjm5yv7fmg4pwyvrlv9zr4macmv": {
+      "StorePath": "/nix/store/shs2lyjm5yv7fmg4pwyvrlv9zr4macmv-gcc-14.3.0-libgcc",
+      "URL": "nar/0rb32hq3h0klp75ky5bdyzs9bfqvnrvz2ygb8vhk8qbqavzbajbg.nar.xz",
+      "References": null
+    },
+    "xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri": {
+      "StorePath": "/nix/store/xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri-gcc-14.3.0-lib",
+      "URL": "nar/0287z2wv85bcnba0hfmysmsq2dwakav96l5shsq2zrlv2a5bwwh7.nar.xz",
+      "References": [
+        "shs2lyjm5yv7fmg4pwyvrlv9zr4macmv-gcc-14.3.0-libgcc",
+        "xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri-gcc-14.3.0-lib",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ]
+    },
+    "xx7cm72qy2c0643cm1ipngd87aqwkcdp": {
+      "StorePath": "/nix/store/xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66",
+      "URL": "nar/07wrglz4aqprvqwrqcnkik48038hb9wd7lgch754s6gq1mfq7gzs.nar.xz",
+      "References": [
+        "2a3izq4hffdd9r9gb2w6q2ibdc86kss6-xgcc-14.3.0-libgcc",
+        "hxcmad417fd8ql9ylx96xpak7da06yiv-libidn2-2.3.8",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ]
+    }
+  },
+  "files": {}
+}

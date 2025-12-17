@@ -120,6 +120,8 @@ func main() {
 			os.Exit(1)
 		}
 		switchGeneration(id)
+	case "gc":
+		runGC()
 	case "help":
 		printHelp()
 	default:
@@ -138,6 +140,7 @@ func printHelp() {
 	fmt.Println("  generations          List available generations")
 	fmt.Println("  rollback             Rollback to the previous generation")
 	fmt.Println("  switch-generation <id> Switch to a specific generation")
+	fmt.Println("  gc                   Garbage collect unused store paths")
 	fmt.Println("  help                 Show this help message")
 }
 
@@ -295,6 +298,7 @@ func listGenerations() {
 			}
 		}
 	}
+	
 	sort.Ints(ids)
 
 	fmt.Printf("%-5s %-20s\n", "ID", "Date")
@@ -1157,3 +1161,78 @@ func cleanupStaleWrappers(validPaths []string) {
 		}
 	}
 }
+
+// --- Garbage Collection ---
+
+func runGC() {
+	fmt.Println("🧹 Starting Garbage Collection...")
+
+	// 1. Identify Live Paths
+	keepPaths := make(map[string]bool)
+
+	// From Generations
+	genEntries, _ := os.ReadDir(GenerationsDir)
+	for _, e := range genEntries {
+		if !e.IsDir() {
+			continue
+		}
+		lockPath := filepath.Join(GenerationsDir, e.Name(), "husk.lock")
+		lock, err := loadLockFile(lockPath)
+		if err != nil {
+			continue
+		}
+		for _, item := range lock.Closure {
+			keepPaths[item.StorePath] = true
+		}
+	}
+
+	fmt.Printf("found %d live store paths from %d generations.\n", len(keepPaths), len(genEntries))
+
+	// 2. Scan Store
+	storeEntries, err := os.ReadDir(StoreDir)
+	if err != nil {
+		fmt.Printf("❌ Error reading store: %v\n", err)
+		return
+	}
+
+	// 3. Sweep
+	deletedCount := 0
+	var freedSpace int64 = 0
+
+	for _, entry := range storeEntries {
+		fullPath := filepath.Join(StoreDir, entry.Name())
+		if !keepPaths[fullPath] {
+			// Get size for reporting
+			var size int64
+			filepath.Walk(fullPath, func(_ string, info os.FileInfo, err error) error {
+				if err == nil {
+					size += info.Size()
+				}
+				return nil
+			})
+
+			if err := os.RemoveAll(fullPath); err == nil {
+				deletedCount++
+				freedSpace += size
+			} else {
+				fmt.Printf("⚠️ Failed to delete %s: %v\n", entry.Name(), err)
+			}
+		}
+	}
+
+	fmt.Printf("✅ GC Complete. Removed %d paths. Freed %s.\n", deletedCount, formatBytes(freedSpace))
+}
+
+func formatBytes(b int64) string {
+	const unit = 1024
+	if b < unit {
+		return fmt.Sprintf("%d B", b)
+	}
+	div, exp := int64(unit), 0
+	for n := b / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+	return fmt.Sprintf("%.1f %ciB", float64(b)/float64(div), "KMGTPE"[exp])
+}
+
