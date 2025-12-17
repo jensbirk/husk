@@ -1,9 +1,28 @@
 {
   "packages": {
+    "go": "/nix/store/0a3dyfq09dnkw28ap2i450wjimvdmv6s-go-1.25.4",
     "neovim": "/nix/store/qnv9sbhbw70v990q01432ipqkl4y0dcc-neovim-0.2.1",
     "ripgrep": "/nix/store/2fngznir58zqpvg2wl7iy5amlsbzhf9p-ripgrep-15.1.0"
   },
   "closure": {
+    "0a3dyfq09dnkw28ap2i450wjimvdmv6s": {
+      "StorePath": "/nix/store/0a3dyfq09dnkw28ap2i450wjimvdmv6s-go-1.25.4",
+      "URL": "nar/0p8hg0zp2nygia0mj6xx90mpri52m56nign2hiazvvq8yl3jfy9j.nar.xz",
+      "References": [
+        "148w3ssbgc4wf6xcp6j0s5vy5mz41i8y-iana-etc-20250505",
+        "g4z9m2pl1wcv35yzgjg1934gmj83gx9m-mailcap-2.1.54",
+        "rlq03x4cwf8zn73hxaxnx0zn5q9kifls-bash-5.3p3",
+        "xaa75rd44q62nc9mrbvym9d1m6gy0fj8-tzdata-2025b",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ]
+    },
+    "148w3ssbgc4wf6xcp6j0s5vy5mz41i8y": {
+      "StorePath": "/nix/store/148w3ssbgc4wf6xcp6j0s5vy5mz41i8y-iana-etc-20250505",
+      "URL": "nar/1jirzhcykqwm0mzzyfml59bcbvpkc6cvqzcmfy1y191yxipvkyg9.nar.xz",
+      "References": [
+        "148w3ssbgc4wf6xcp6j0s5vy5mz41i8y-iana-etc-20250505"
+      ]
+    },
     "1fjvjshcrcf1lzmrpgn0wjvggz2x982a": {
       "StorePath": "/nix/store/1fjvjshcrcf1lzmrpgn0wjvggz2x982a-libmsgpack-2.1.5",
       "URL": "nar/03ig79b6np12i80mxgq27lysvld0w5j1zl10c7jncivb6zbxqr6c.nar.xz",
@@ -357,6 +376,11 @@
         "fszfhjfjajwlhzmiyi8bdhvdxlw5n2ff-linux-headers-4.4.10"
       ]
     },
+    "g4z9m2pl1wcv35yzgjg1934gmj83gx9m": {
+      "StorePath": "/nix/store/g4z9m2pl1wcv35yzgjg1934gmj83gx9m-mailcap-2.1.54",
+      "URL": "nar/1q652ahj7r20mlr4srdxjcnvx9z1678yx137dh3iiajr22m2lvsz.nar.xz",
+      "References": null
+    },
     "gd5z1rvhkj13bmxpmr8ayqgkd7z3n85q": {
       "StorePath": "/nix/store/gd5z1rvhkj13bmxpmr8ayqgkd7z3n85q-libuv-1.18.0",
       "URL": "nar/0ih7a6j6v0iyj7d9a55k933f6iwc53rqd8fc0svh4a6wr97k5gs7.nar.xz",
@@ -564,6 +588,14 @@
         "i5ig950zqwln4qi8wfaivgp3bjzzl3jz-python2.7-setuptools-38.2.5"
       ]
     },
+    "rlq03x4cwf8zn73hxaxnx0zn5q9kifls": {
+      "StorePath": "/nix/store/rlq03x4cwf8zn73hxaxnx0zn5q9kifls-bash-5.3p3",
+      "URL": "nar/1dwqacysbay4jclhayjamw5rqvamfdqw9b204lrmxlj3b2adljwv.nar.xz",
+      "References": [
+        "rlq03x4cwf8zn73hxaxnx0zn5q9kifls-bash-5.3p3",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ]
+    },
     "s12d9fcyrb1k6zbpm95xzwx0i1pxc267": {
       "StorePath": "/nix/store/s12d9fcyrb1k6zbpm95xzwx0i1pxc267-gdbm-1.13",
       "URL": "nar/1dx6y97h6nn0k2cxaxfcmnm14cix78dx7x5kpva0d13byj05z8gh.nar.xz",
@@ -647,6 +679,11 @@
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "x78x5h01cbl5hp61bswa4cq3171j1xcc-neovim-libvterm-2017-11-05"
       ]
+    },
+    "xaa75rd44q62nc9mrbvym9d1m6gy0fj8": {
+      "StorePath": "/nix/store/xaa75rd44q62nc9mrbvym9d1m6gy0fj8-tzdata-2025b",
+      "URL": "nar/165sqx1rnhl69ra9abw4izvh63gnniknh5kfydph2s4hvgahg11z.nar.xz",
+      "References": null
     },
     "xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri": {
       "StorePath": "/nix/store/xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri-gcc-14.3.0-lib",

@@ -48,6 +48,40 @@ var (
 		"unstable": "https://hydra.nixos.org/job/nixpkgs/trunk",
 		"stable":   "https://hydra.nixos.org/job/nixos/release-23.11/nixpkgs",
 	}
+	
+	// Builtin Recipes for unfree/complex apps
+	Recipes = map[string]string{
+		"discord": `#!/bin/sh
+set -e
+echo "Downloading Discord..."
+url="https://discord.com/api/download?platform=linux&format=tar.gz"
+curl -L -o discord.tar.gz "$url"
+tar -xzf discord.tar.gz
+
+mkdir -p $OUT/bin $OUT/share/applications $OUT/share/icons/hicolor/256x256/apps
+mv Discord/* $OUT/
+
+# Create wrapper with --no-sandbox to fix SUID issues
+cat > $OUT/bin/discord <<EOF
+#!/bin/sh
+exec $OUT/Discord --no-sandbox "\$@"
+EOF
+chmod +x $OUT/bin/discord
+
+# Desktop file
+cat > $OUT/share/applications/discord.desktop <<EOF
+[Desktop Entry]
+Name=Discord
+Exec=$OUT/bin/discord
+Icon=discord
+Type=Application
+Categories=Network;InstantMessaging;
+EOF
+
+# Icon
+cp $OUT/discord.png $OUT/share/icons/hicolor/256x256/apps/discord.png
+`,
+	}
 )
 
 // --- Structs ---
@@ -55,7 +89,6 @@ var (
 type Manifest struct {
 	Channels map[string]string `yaml:"channels"`
 	Packages []interface{}     `yaml:"packages"`
-	GUIs     []interface{}     `yaml:"guis"`
 	Env      map[string]string `yaml:"env"`
 }
 
@@ -198,12 +231,6 @@ func runSync(manifestPath string) {
 		fmt.Printf("❌ Installation failed: %v\n", err)
 		return
 	}
-
-	// Flatpaks
-	fm := NewFlatpakManager()
-	fm.EnsureRemote()
-	flatPkgs := parseFlatpaks(m)
-	fm.InstallAndPrune(flatPkgs)
 
 	// Dotfiles
 	newFiles := manageDotfiles(m, lock.Files)
@@ -427,12 +454,6 @@ func switchGeneration(id int) {
 		return
 	}
 
-	// Flatpaks
-	fm := NewFlatpakManager()
-	fm.EnsureRemote()
-	flatPkgs := parseFlatpaks(m)
-	fm.InstallAndPrune(flatPkgs)
-
 	// Dotfiles
 	// Warning: This might fail if source files are missing.
 	// We'll proceed with best effort.
@@ -650,25 +671,6 @@ func saveLockFile(path string, pkgs map[string]string, closure map[string]Closur
 	os.WriteFile(path, lBytes, 0644)
 }
 
-func parseFlatpaks(m *Manifest) []string {
-	var flatPkgs []string
-	for _, g := range m.GUIs {
-		if name, ok := g.(string); ok {
-			flatPkgs = append(flatPkgs, name)
-		} else if gMap, ok := g.(map[string]interface{}); ok {
-			for _, rawCfg := range gMap {
-				b, _ := yaml.Marshal(rawCfg)
-				var cfg PkgConfig
-				yaml.Unmarshal(b, &cfg)
-				if cfg.ID != "" {
-					flatPkgs = append(flatPkgs, cfg.ID)
-				}
-			}
-		}
-	}
-	return flatPkgs
-}
-
 // --- Utilities ---
 
 func checkEnv() {
@@ -719,15 +721,22 @@ func fetchNarInfo(hashVal string) (*NarInfo, error) {
 }
 
 func queryHydraClosure(pkgName, channelURL, buildScript string) (string, string, map[string]ClosureItem) {
-	if buildScript != "" {
-		h := sha256.Sum256([]byte(buildScript))
+	effectiveBuildScript := buildScript
+	if effectiveBuildScript == "" {
+		if recipe, ok := Recipes[pkgName]; ok {
+			effectiveBuildScript = recipe
+		}
+	}
+
+	if effectiveBuildScript != "" {
+		h := sha256.Sum256([]byte(effectiveBuildScript))
 		hashStr := hex.EncodeToString(h[:])[:32]
 		storePath := fmt.Sprintf("%s/%s-%s", StoreDir, hashStr, pkgName)
 		closure := map[string]ClosureItem{
 			hashStr: {
 				StorePath:   storePath,
 				Type:        "CustomBuild",
-				BuildScript: buildScript,
+				BuildScript: effectiveBuildScript,
 			},
 		}
 		return pkgName, storePath, closure
@@ -735,6 +744,7 @@ func queryHydraClosure(pkgName, channelURL, buildScript string) (string, string,
 
 	url := fmt.Sprintf("%s/%s.%s/latest", channelURL, pkgName, System)
 	req, _ := http.NewRequest("HEAD", url, nil)
+	req.Header.Set("User-Agent", "curl/7.68.0") // Mimic standard tool to avoid blocks
 	client := &http.Client{CheckRedirect: func(req *http.Request, via []*http.Request) error { return nil }}
 	resp, err := client.Do(req)
 
@@ -745,11 +755,19 @@ func queryHydraClosure(pkgName, channelURL, buildScript string) (string, string,
 	finalURL := resp.Request.URL.String()
 	req, _ = http.NewRequest("GET", finalURL, nil)
 	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", "curl/7.68.0")
 	resp, err = client.Do(req)
 	if err != nil {
 		return pkgName, "", nil
 	}
 	defer resp.Body.Close()
+
+	// Check if response is HTML (Anti-bot)
+	contentType := resp.Header.Get("Content-Type")
+	if strings.Contains(contentType, "text/html") {
+		fmt.Printf("⚠️  Hydra blocked request for %s (Anti-bot).\n", pkgName)
+		return pkgName, "", nil
+	}
 
 	var data map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
@@ -973,63 +991,6 @@ func installPackage(item ClosureItem) string {
 		return ""
 	}
 	return folderName
-}
-
-// --- Flatpak Integration ---
-
-type FlatpakManager struct {
-	cmd string
-}
-
-func NewFlatpakManager() *FlatpakManager {
-	path, _ := exec.LookPath("flatpak")
-	return &FlatpakManager{cmd: path}
-}
-
-func (fm *FlatpakManager) EnsureRemote() {
-	if fm.cmd == "" {
-		return
-	}
-	exec.Command(fm.cmd, "remote-add", "--user", "--if-not-exists", "flathub", "https://dl.flathub.org/repo/flathub.flatpakrepo").Run()
-}
-
-func (fm *FlatpakManager) InstallAndPrune(desired []string) {
-	if fm.cmd == "" {
-		return
-	}
-	out, _ := exec.Command(fm.cmd, "list", "--user", "--app", "--columns=application").Output()
-	installed := strings.Split(string(out), "\n")
-	instMap := make(map[string]bool)
-	for _, l := range installed {
-		if strings.TrimSpace(l) != "" {
-			instMap[strings.TrimSpace(l)] = true
-		}
-	}
-	desiredMap := make(map[string]bool)
-	var needed []string
-	for _, pkg := range desired {
-		desiredMap[pkg] = true
-		if !instMap[pkg] {
-			needed = append(needed, pkg)
-		}
-	}
-	if len(needed) > 0 {
-		fmt.Printf("📺 Installing %d Flatpaks...\n", len(needed))
-		args := append([]string{"install", "--user", "-y", "flathub"}, needed...)
-		cmd := exec.Command(fm.cmd, args...)
-		cmd.Run()
-	}
-	var toRemove []string
-	for inst := range instMap {
-		if !desiredMap[inst] {
-			toRemove = append(toRemove, inst)
-		}
-	}
-	if len(toRemove) > 0 {
-		fmt.Printf("🗑️  Pruning %d Flatpaks...\n", len(toRemove))
-		args := append([]string{"uninstall", "--user", "-y"}, toRemove...)
-		exec.Command(fm.cmd, args...).Run()
-	}
 }
 
 // --- Linkers & Cleaners ---
