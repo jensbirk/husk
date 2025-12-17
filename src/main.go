@@ -102,7 +102,22 @@ func main() {
 
 	switch cmd {
 	case "install", "sync":
-		runSync(manifestPath)
+		args := os.Args[2:]
+		manifestToSync := ManifestFile
+
+		if len(args) > 0 {
+			// Check if first arg is a file
+			if _, err := os.Stat(args[0]); err == nil {
+				manifestToSync = args[0]
+			} else {
+				// Assume packages to install
+				if err := addPackages(args); err != nil {
+					fmt.Printf("❌ Failed to add packages: %v\n", err)
+					os.Exit(1)
+				}
+			}
+		}
+		runSync(manifestToSync)
 	case "shell", "dev":
 		runShell(manifestPath)
 	case "generations", "list-generations":
@@ -128,6 +143,17 @@ func main() {
 			os.Exit(1)
 		}
 		runSearch(os.Args[2])
+	case "rm":
+		args := os.Args[2:]
+		if len(args) == 0 {
+			fmt.Println("Usage: husk rm <package> [package...]")
+			os.Exit(1)
+		}
+		if err := removePackages(args); err != nil {
+			fmt.Printf("❌ Failed to remove packages: %v\n", err)
+			os.Exit(1)
+		}
+		runSync(ManifestFile)
 	case "help":
 		printHelp()
 	default:
@@ -148,6 +174,7 @@ func printHelp() {
 	fmt.Println("  switch-generation <id> Switch to a specific generation")
 	fmt.Println("  gc                   Garbage collect unused store paths")
 	fmt.Println("  search <term>        Search for packages (via Repology/Nix Unstable)")
+	fmt.Println("  rm <package...>      Remove package(s) from husk.yaml and uninstall")
 	fmt.Println("  help                 Show this help message")
 }
 
@@ -1318,4 +1345,105 @@ func runSearch(term string) {
 		}
 	}
 }
+
+func addPackages(pkgs []string) error {
+	m, err := loadManifest(ManifestFile)
+	if err != nil {
+		// If manifest doesn't exist, create a new one
+		if os.IsNotExist(err) {
+			fmt.Println("✨ Creating new husk.yaml...")
+			m = &Manifest{
+				Channels: DefaultChannels,
+				Packages: []interface{}{},
+				Env:      map[string]string{},
+			}
+		} else {
+			return err
+		}
+	}
+
+	dirty := false
+	existing := make(map[string]bool)
+	for _, p := range m.Packages {
+		if name, ok := p.(string); ok {
+			existing[name] = true
+		} else if pMap, ok := p.(map[string]interface{}); ok {
+			for k := range pMap {
+				existing[k] = true
+			}
+		}
+	}
+
+	for _, pkg := range pkgs {
+		if !existing[pkg] {
+			m.Packages = append(m.Packages, pkg)
+			dirty = true
+			fmt.Printf("➕ Added %s to husk.yaml\n", pkg)
+		} else {
+			fmt.Printf("ℹ️  %s already in husk.yaml\n", pkg)
+		}
+	}
+
+	if dirty {
+		data, err := yaml.Marshal(m)
+		if err != nil {
+			return err
+		}
+		return os.WriteFile(ManifestFile, data, 0644)
+	}
+	return nil
+}
+
+func removePackages(pkgsToRemove []string) error {
+	m, err := loadManifest(ManifestFile)
+	if err != nil {
+		return err // Cannot remove from non-existent manifest
+	}
+
+	pkgsToRemoveMap := make(map[string]bool)
+	for _, p := range pkgsToRemove {
+		pkgsToRemoveMap[p] = true
+	}
+
+	var newPackages []interface{}
+	dirty := false
+
+	for _, p := range m.Packages {
+		keep := true
+		if name, ok := p.(string); ok {
+			if pkgsToRemoveMap[name] {
+				keep = false
+				fmt.Printf("➖ Removed %s from husk.yaml\n", name)
+			}
+		} else if pMap, ok := p.(map[string]interface{}); ok {
+			// Assume only one key for pkgMap, e.g. "go: {channel: unstable}"
+			for k := range pMap {
+				if pkgsToRemoveMap[k] {
+					keep = false
+					fmt.Printf("➖ Removed %s from husk.yaml\n", k)
+				}
+				break // Only check first key if multiple existed
+			}
+		}
+
+		if keep {
+			newPackages = append(newPackages, p)
+		} else {
+			dirty = true
+		}
+	}
+
+	if !dirty {
+		fmt.Println("ℹ️  No packages to remove found in husk.yaml.")
+		return nil
+	}
+
+	m.Packages = newPackages
+	data, err := yaml.Marshal(m)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(ManifestFile, data, 0644)
+}
+
 
