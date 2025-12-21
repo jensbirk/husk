@@ -111,12 +111,14 @@ type ClosureItem struct {
 	References  []string `json:"References"`
 	Type        string   `json:"Type,omitempty"`
 	BuildScript string   `json:"BuildScript,omitempty"`
+	FileSize    int64    `json:"FileSize,omitempty"`
 }
 
 type NarInfo struct {
 	StorePath  string
 	URL        string
 	References []string
+	FileSize   int64
 }
 
 // --- Entry Points ---
@@ -679,7 +681,128 @@ func saveLockFile(path string, pkgs map[string]string, closure map[string]Closur
 	os.WriteFile(path, lBytes, 0644)
 }
 
+// --- Progress Tracking ---
+
+type pkgStatus struct {
+	downloaded int64
+	total      int64
+	isBuilding bool
+}
+
+type GlobalProgress struct {
+	mu         sync.Mutex
+	active     map[string]*pkgStatus
+	lines      int
+	lastRender time.Time
+}
+
+var GPM = &GlobalProgress{
+	active: make(map[string]*pkgStatus),
+}
+
+func (g *GlobalProgress) Update(name string, downloaded, total int64, isBuilding bool) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	if _, ok := g.active[name]; !ok {
+		g.active[name] = &pkgStatus{}
+	}
+	g.active[name].downloaded = downloaded
+	g.active[name].total = total
+	g.active[name].isBuilding = isBuilding
+
+	if time.Since(g.lastRender) > 50*time.Millisecond {
+		g.render()
+		g.lastRender = time.Now()
+	}
+}
+
+func (g *GlobalProgress) Done(name string) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	delete(g.active, name)
+	// Clear the lines when done if no more active packages
+	if len(g.active) == 0 {
+		if g.lines > 0 {
+			fmt.Printf("\033[%dA\033[J", g.lines)
+			g.lines = 0
+		}
+	} else {
+		g.render()
+	}
+	g.lastRender = time.Now()
+}
+
+func (g *GlobalProgress) render() {
+	if g.lines > 0 {
+		fmt.Printf("\033[%dA", g.lines)
+	}
+
+	var names []string
+	for n := range g.active {
+		names = append(names, n)
+	}
+	sort.Strings(names)
+
+	newLines := 0
+	for _, n := range names {
+		s := g.active[n]
+		if s.isBuilding {
+			fmt.Printf("\033[K🛠️  %-40s [ BUILDING ]\n", truncate(n, 40))
+		} else {
+			pct := 0.0
+			if s.total > 0 {
+				pct = float64(s.downloaded) / float64(s.total) * 100
+			}
+			fmt.Printf("\033[K📦 %-40s [%-20s] %3.0f%%\n", truncate(n, 40), progressBar(pct, 20), pct)
+		}
+		newLines++
+	}
+
+	if newLines < g.lines {
+		for i := 0; i < g.lines-newLines; i++ {
+			fmt.Printf("\033[K\n")
+		}
+		fmt.Printf("\033[%dA", g.lines-newLines)
+	}
+
+	g.lines = newLines
+}
+
+func progressBar(pct float64, width int) string {
+	filled := int(pct / 100 * float64(width))
+	if filled < 0 {
+		filled = 0
+	}
+	if filled > width {
+		filled = width
+	}
+	return strings.Repeat("#", filled) + strings.Repeat("-", width-filled)
+}
+
+func truncate(s string, n int) string {
+	if len(s) > n {
+		return s[:n-3] + "..."
+	}
+	return s
+}
+
 // --- Utilities ---
+
+type ProgressReader struct {
+	io.Reader
+	Total      int64
+	Downloaded int64
+	OnProgress func(downloaded, total int64)
+}
+
+func (pr *ProgressReader) Read(p []byte) (n int, err error) {
+	n, err = pr.Reader.Read(p)
+	pr.Downloaded += int64(n)
+	if pr.OnProgress != nil {
+		pr.OnProgress(pr.Downloaded, pr.Total)
+	}
+	return
+}
 
 func checkEnv() {
 	if _, err := os.Stat(StoreDir); os.IsNotExist(err) {
@@ -718,6 +841,9 @@ func fetchNarInfo(hashVal string) (*NarInfo, error) {
 			info.StorePath = strings.TrimPrefix(line, "StorePath: ")
 		} else if strings.HasPrefix(line, "URL: ") {
 			info.URL = strings.TrimPrefix(line, "URL: ")
+		} else if strings.HasPrefix(line, "FileSize: ") {
+			sizeStr := strings.TrimPrefix(line, "FileSize: ")
+			info.FileSize, _ = strconv.ParseInt(sizeStr, 10, 64)
 		} else if strings.HasPrefix(line, "References: ") {
 			refs := strings.TrimPrefix(line, "References: ")
 			if refs != "" {
@@ -828,6 +954,7 @@ func resolveClosure(rootPath string) map[string]ClosureItem {
 			StorePath:  info.StorePath,
 			URL:        info.URL,
 			References: info.References,
+			FileSize:   info.FileSize,
 		}
 
 		for _, ref := range info.References {
@@ -965,15 +1092,15 @@ func installPackage(item ClosureItem) string {
 	}
 
 	if item.Type == "CustomBuild" {
-		fmt.Printf("🛠️  Building Custom: %s\n", folderName)
+		GPM.Update(folderName, 0, 0, true)
+		defer GPM.Done(folderName)
 		os.MkdirAll(destPath, 0755)
 		tmpScript := filepath.Join(os.TempDir(), "build.sh")
 		os.WriteFile(tmpScript, []byte(item.BuildScript), 0755)
 		cmd := exec.Command("/bin/bash", tmpScript)
 		cmd.Env = append(os.Environ(), "OUT="+destPath)
 		cmd.Dir = os.TempDir()
-		if out, err := cmd.CombinedOutput(); err != nil {
-			fmt.Printf("Build failed: %s\n", out)
+		if _, err := cmd.CombinedOutput(); err != nil {
 			os.RemoveAll(destPath)
 		}
 		return folderName
@@ -982,19 +1109,30 @@ func installPackage(item ClosureItem) string {
 	url := fmt.Sprintf("%s/%s", CacheURL, item.URL)
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Printf("Failed to download %s\n", url)
 		return ""
 	}
 	defer resp.Body.Close()
 
-	xzReader, err := xz.NewReader(resp.Body)
+	total := item.FileSize
+	if total == 0 {
+		total = resp.ContentLength
+	}
+
+	pr := &ProgressReader{
+		Reader: resp.Body,
+		Total:  total,
+		OnProgress: func(d, t int64) {
+			GPM.Update(folderName, d, t, false)
+		},
+	}
+	defer GPM.Done(folderName)
+
+	xzReader, err := xz.NewReader(pr)
 	if err != nil {
-		fmt.Printf("XZ init failed: %v\n", err)
 		return ""
 	}
 	readString(xzReader) // "nix-archive-1"
 	if err := unpackNarNode(xzReader, destPath); err != nil {
-		fmt.Printf("Unpack failed for %s: %v\n", folderName, err)
 		os.RemoveAll(destPath)
 		return ""
 	}

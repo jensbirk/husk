@@ -1,10 +1,27 @@
 {
   "packages": {
+    "bat": "/nix/store/01wp2vgd70ssmk4fmkc2lh98jkyxnxvv-bat-0.26.1",
+    "fzf": "/nix/store/lc3zmvfh5cyzdgijm8f5sjgd0q3hl9pk-fzf-0.67.0",
+    "gemini-cli": "/nix/store/vv4kbv1pc9zfwz1z24h9l2ibjhwypl87-gemini-cli-0.21.1",
     "go": "/nix/store/0a3dyfq09dnkw28ap2i450wjimvdmv6s-go-1.25.4",
     "neovim": "/nix/store/qnv9sbhbw70v990q01432ipqkl4y0dcc-neovim-0.2.1",
-    "ripgrep": "/nix/store/2fngznir58zqpvg2wl7iy5amlsbzhf9p-ripgrep-15.1.0"
+    "ripgrep": "/nix/store/2fngznir58zqpvg2wl7iy5amlsbzhf9p-ripgrep-15.1.0",
+    "vim": "/nix/store/qrrvbacv3lrabr87l2fz1wc8nmp5r0zr-vim-9.1.1869"
   },
   "closure": {
+    "01wp2vgd70ssmk4fmkc2lh98jkyxnxvv": {
+      "StorePath": "/nix/store/01wp2vgd70ssmk4fmkc2lh98jkyxnxvv-bat-0.26.1",
+      "URL": "nar/1dydfxj3hap5m1plr2vxclyc06kc80rvqdyc29a7p7m7hwafz678.nar.xz",
+      "References": [
+        "01wp2vgd70ssmk4fmkc2lh98jkyxnxvv-bat-0.26.1",
+        "l7xwm1f6f3zj2x8jwdbi8gdyfbx07sh7-zlib-1.3.1",
+        "pfkyva576bsx649x918pgysdr1rcyxzq-less-679",
+        "rlq03x4cwf8zn73hxaxnx0zn5q9kifls-bash-5.3p3",
+        "xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri-gcc-14.3.0-lib",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 2963196
+    },
     "0a3dyfq09dnkw28ap2i450wjimvdmv6s": {
       "StorePath": "/nix/store/0a3dyfq09dnkw28ap2i450wjimvdmv6s-go-1.25.4",
       "URL": "nar/0p8hg0zp2nygia0mj6xx90mpri52m56nign2hiazvvq8yl3jfy9j.nar.xz",
@@ -14,14 +31,25 @@
         "rlq03x4cwf8zn73hxaxnx0zn5q9kifls-bash-5.3p3",
         "xaa75rd44q62nc9mrbvym9d1m6gy0fj8-tzdata-2025b",
         "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
-      ]
+      ],
+      "FileSize": 38225792
+    },
+    "12qcfbv6bgmxi1jd2dcddy25ijpcgj60": {
+      "StorePath": "/nix/store/12qcfbv6bgmxi1jd2dcddy25ijpcgj60-attr-2.5.2",
+      "URL": "nar/1plwzzynaqrwhs58saw058b69704yvlw58wx6scgism0b661jh87.nar.xz",
+      "References": [
+        "12qcfbv6bgmxi1jd2dcddy25ijpcgj60-attr-2.5.2",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 16580
     },
     "148w3ssbgc4wf6xcp6j0s5vy5mz41i8y": {
       "StorePath": "/nix/store/148w3ssbgc4wf6xcp6j0s5vy5mz41i8y-iana-etc-20250505",
       "URL": "nar/1jirzhcykqwm0mzzyfml59bcbvpkc6cvqzcmfy1y191yxipvkyg9.nar.xz",
       "References": [
         "148w3ssbgc4wf6xcp6j0s5vy5mz41i8y-iana-etc-20250505"
-      ]
+      ],
+      "FileSize": 103784
     },
     "1fjvjshcrcf1lzmrpgn0wjvggz2x982a": {
       "StorePath": "/nix/store/1fjvjshcrcf1lzmrpgn0wjvggz2x982a-libmsgpack-2.1.5",
@@ -29,7 +57,8 @@
       "References": [
         "1fjvjshcrcf1lzmrpgn0wjvggz2x982a-libmsgpack-2.1.5",
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115"
-      ]
+      ],
+      "FileSize": 194888
     },
     "1jzzs3axv8iwx9h0rndcnk7jh9b7v3wg": {
       "StorePath": "/nix/store/1jzzs3axv8iwx9h0rndcnk7jh9b7v3wg-db-5.3.28",
@@ -38,14 +67,16 @@
         "1jzzs3axv8iwx9h0rndcnk7jh9b7v3wg-db-5.3.28",
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "yfkvvnp2ak44nlhfm4xq82i52kzrj4cc-gcc-6.4.0-lib"
-      ]
+      ],
+      "FileSize": 908340
     },
     "1zv5dwifxg5fh08gif8ld3h9f40y8czh": {
       "StorePath": "/nix/store/1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
       "URL": "nar/0jcasrildfiml4k81v2pqvdrj7rhxz1q8404lijik0b0zcxdp2h3.nar.xz",
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115"
-      ]
+      ],
+      "FileSize": 5697972
     },
     "292g14vvf1p8h3nkdx4vvq7b1bh3p1ww": {
       "StorePath": "/nix/store/292g14vvf1p8h3nkdx4vvq7b1bh3p1ww-glibc-2.26-115-bin",
@@ -53,12 +84,14 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "292g14vvf1p8h3nkdx4vvq7b1bh3p1ww-glibc-2.26-115-bin"
-      ]
+      ],
+      "FileSize": 647436
     },
     "2a3izq4hffdd9r9gb2w6q2ibdc86kss6": {
       "StorePath": "/nix/store/2a3izq4hffdd9r9gb2w6q2ibdc86kss6-xgcc-14.3.0-libgcc",
       "URL": "nar/1125zqba8cx8wbfa632vy458a3j3xja0qpcqafsfdildyl9dqa7x.nar.xz",
-      "References": null
+      "References": null,
+      "FileSize": 74272
     },
     "2crl0amdl0snflar5zmvkzdi5dn933zr": {
       "StorePath": "/nix/store/2crl0amdl0snflar5zmvkzdi5dn933zr-libyaml-0.1.7",
@@ -66,7 +99,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "2crl0amdl0snflar5zmvkzdi5dn933zr-libyaml-0.1.7"
-      ]
+      ],
+      "FileSize": 53376
     },
     "2cws7lpkv8pfw3jma5g4jh4qf3hnfsyh": {
       "StorePath": "/nix/store/2cws7lpkv8pfw3jma5g4jh4qf3hnfsyh-binutils-wrapper-2.28.1",
@@ -80,7 +114,18 @@
         "nkq0n2m4shlbdvdq0qijib5zyzgmn0vq-bash-4.4-p12",
         "p2bkk31685y6b4l30bp9961g6kd133wd-glibc-2.26-115-dev",
         "wxn5gn8amxm1w0ikcx4gbs8a17wvss4j-binutils-2.28.1"
-      ]
+      ],
+      "FileSize": 5324
+    },
+    "2f7yzmvcsydw38zr369l9xpk63v1ld5q": {
+      "StorePath": "/nix/store/2f7yzmvcsydw38zr369l9xpk63v1ld5q-gmp-with-cxx-6.3.0",
+      "URL": "nar/0xf9zivg2r9ax70b69189fsrz2q7lns77wrb8fmrq9mafibl646k.nar.xz",
+      "References": [
+        "2f7yzmvcsydw38zr369l9xpk63v1ld5q-gmp-with-cxx-6.3.0",
+        "xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri-gcc-14.3.0-lib",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 279084
     },
     "2fngznir58zqpvg2wl7iy5amlsbzhf9p": {
       "StorePath": "/nix/store/2fngznir58zqpvg2wl7iy5amlsbzhf9p-ripgrep-15.1.0",
@@ -89,7 +134,19 @@
         "6y07blp88mrgn05wxbif8yzmd0g2ss4x-pcre2-10.46",
         "xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri-gcc-14.3.0-lib",
         "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
-      ]
+      ],
+      "FileSize": 1614816
+    },
+    "35yc81pz0q5yba14lxhn5r3jx5yg6c3l": {
+      "StorePath": "/nix/store/35yc81pz0q5yba14lxhn5r3jx5yg6c3l-bash-interactive-5.3p3",
+      "URL": "nar/15w9h74jmvrijdrivm2b8vcvi63p0l9gi6hyyw9v0vghgjcvi2m8.nar.xz",
+      "References": [
+        "35yc81pz0q5yba14lxhn5r3jx5yg6c3l-bash-interactive-5.3p3",
+        "41cgbkwax6pd1sgi8l81mamv6rvarryj-readline-8.3p1",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66",
+        "yijhn548p2589pkybgvbhll09bqsxy0q-ncurses-6.5"
+      ],
+      "FileSize": 1196556
     },
     "3bqfa90r2vcm5sg40lkylrwhl4mpmq0v": {
       "StorePath": "/nix/store/3bqfa90r2vcm5sg40lkylrwhl4mpmq0v-libXau-1.0.8",
@@ -97,7 +154,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "3bqfa90r2vcm5sg40lkylrwhl4mpmq0v-libXau-1.0.8"
-      ]
+      ],
+      "FileSize": 7876
     },
     "3d5vzizh55xl7mk7dq6hxmx2x3r83788": {
       "StorePath": "/nix/store/3d5vzizh55xl7mk7dq6hxmx2x3r83788-ruby-2.3.6",
@@ -115,14 +173,60 @@
         "nkq0n2m4shlbdvdq0qijib5zyzgmn0vq-bash-4.4-p12",
         "s12d9fcyrb1k6zbpm95xzwx0i1pxc267-gdbm-1.13",
         "v8z56hjwli0yxqczzajg5fhi4n6vm65f-openssl-1.0.2n"
-      ]
+      ],
+      "FileSize": 3597632
+    },
+    "3lll9y925zz9393sa59h653xik66srjb": {
+      "StorePath": "/nix/store/3lll9y925zz9393sa59h653xik66srjb-python3-3.13.9",
+      "URL": "nar/0nldzqax2z9352672hqjgxfp4pv280ik78h1yw7nfvv3bq3pxdri.nar.xz",
+      "References": [
+        "3lll9y925zz9393sa59h653xik66srjb-python3-3.13.9",
+        "41cgbkwax6pd1sgi8l81mamv6rvarryj-readline-8.3p1",
+        "61i74yjkj9p1qphfl7018ja4sdwkipx0-openssl-3.6.0",
+        "b9p0zpa93hwvh4d0r1rmgc2500yx2ldn-libffi-3.5.2",
+        "cky5dqng037hhbd41arkza29cv0hqab6-gdbm-1.26-lib",
+        "g4z9m2pl1wcv35yzgjg1934gmj83gx9m-mailcap-2.1.54",
+        "jnjcxanszfrp8ln69wp0n9s237xbh7bz-expat-2.7.3",
+        "l30c488dws7z5mazacqsmj25izb9jlp2-sqlite-3.50.4",
+        "l7xwm1f6f3zj2x8jwdbi8gdyfbx07sh7-zlib-1.3.1",
+        "lcwnhmdd6fqf84y35ll4i6ivi2x8vvd5-mpdecimal-4.0.1",
+        "mzl19fy0j4fl395z3pbkwxcmkxi1733v-util-linux-minimal-2.41.2-lib",
+        "q5vlz5jl6p7mv220s2vf6z5pqi1n935z-xz-5.8.1",
+        "rlq03x4cwf8zn73hxaxnx0zn5q9kifls-bash-5.3p3",
+        "xaa75rd44q62nc9mrbvym9d1m6gy0fj8-tzdata-2025b",
+        "xgavznqg1ay2hycpp7yy9ia1n751jcla-bzip2-1.0.8",
+        "xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri-gcc-14.3.0-lib",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66",
+        "yijhn548p2589pkybgvbhll09bqsxy0q-ncurses-6.5"
+      ],
+      "FileSize": 43063992
     },
     "3rkccxj7vi0p2a0d48c4a4z2vv2cni88": {
       "StorePath": "/nix/store/3rkccxj7vi0p2a0d48c4a4z2vv2cni88-libunistring-1.4.1",
       "URL": "nar/1qiiqq1297gsynq6xhcrv21l450gpgnylqahjk7bl4wvb96ca42m.nar.xz",
       "References": [
         "3rkccxj7vi0p2a0d48c4a4z2vv2cni88-libunistring-1.4.1"
-      ]
+      ],
+      "FileSize": 466884
+    },
+    "41cgbkwax6pd1sgi8l81mamv6rvarryj": {
+      "StorePath": "/nix/store/41cgbkwax6pd1sgi8l81mamv6rvarryj-readline-8.3p1",
+      "URL": "nar/156ih6sapq5lvnznm246znp4mcvpp18g2bbfh7c1mba314wm74jb.nar.xz",
+      "References": [
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66",
+        "yijhn548p2589pkybgvbhll09bqsxy0q-ncurses-6.5"
+      ],
+      "FileSize": 154600
+    },
+    "4424mzk2pyia5v1j33zjgrjaivrdy03y": {
+      "StorePath": "/nix/store/4424mzk2pyia5v1j33zjgrjaivrdy03y-icu4c-76.1",
+      "URL": "nar/0y6yy0317r8fdm2h837h85wpvhs4nv55l6wbkdsihqj8r3l1fggi.nar.xz",
+      "References": [
+        "4424mzk2pyia5v1j33zjgrjaivrdy03y-icu4c-76.1",
+        "xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri-gcc-14.3.0-lib",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 9900908
     },
     "4sjmn78w3x034h0w9lig699amnfmh9rp": {
       "StorePath": "/nix/store/4sjmn78w3x034h0w9lig699amnfmh9rp-python-2.7.14-env",
@@ -138,7 +242,8 @@
         "r4fx6d29glss0wjzbpslsp2i6q0dc5hq-python2.7-futures-3.1.1",
         "r4p4jqcd3r7zl6j00qkld6chqzx15hfn-python2.7-six-1.11.0",
         "wm0629w5zhwvlixj1341xfxwlpnl2amg-python2.7-neovim-0.2.0"
-      ]
+      ],
+      "FileSize": 7092
     },
     "4wqa1whb42khic67rv9jgip30nxmaii8": {
       "StorePath": "/nix/store/4wqa1whb42khic67rv9jgip30nxmaii8-python3-3.6.4",
@@ -158,7 +263,26 @@
         "v8z56hjwli0yxqczzajg5fhi4n6vm65f-openssl-1.0.2n",
         "vxrfcx8g9jhhi7may9p8jnrpr7nwv1wp-expat-2.2.5",
         "w2qlls13sk6bllbni0dyag88fmmvwbin-xz-5.2.3"
-      ]
+      ],
+      "FileSize": 9677584
+    },
+    "586m17rh3and42f2pyqvmsmrxaz6bdkn": {
+      "StorePath": "/nix/store/586m17rh3and42f2pyqvmsmrxaz6bdkn-libuv-1.51.0",
+      "URL": "nar/1lixwslsv6081ll9s50zvbi3f1plipmhz608qi20bdg5pv7jadh0.nar.xz",
+      "References": [
+        "586m17rh3and42f2pyqvmsmrxaz6bdkn-libuv-1.51.0",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 89764
+    },
+    "61i74yjkj9p1qphfl7018ja4sdwkipx0": {
+      "StorePath": "/nix/store/61i74yjkj9p1qphfl7018ja4sdwkipx0-openssl-3.6.0",
+      "URL": "nar/0ggc9ypkw77x2qyww13bi2khgpf7lyr8sv93flvb4hdh5zvh0mj2.nar.xz",
+      "References": [
+        "61i74yjkj9p1qphfl7018ja4sdwkipx0-openssl-3.6.0",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 2494656
     },
     "678bqsn0nrwii0fa7gs4q9s7yrhb6l8v": {
       "StorePath": "/nix/store/678bqsn0nrwii0fa7gs4q9s7yrhb6l8v-ruby2.3.6-msgpack-1.1.0",
@@ -170,7 +294,8 @@
         "9mq51i06492rn8ihavf0ff9j38pldg68-coreutils-8.29",
         "p2bkk31685y6b4l30bp9961g6kd133wd-glibc-2.26-115-dev",
         "yhbp3fy8bmkqziawl78srgzjwqyy91s1-gcc-6.4.0"
-      ]
+      ],
+      "FileSize": 1308272
     },
     "697dh7g650f1qd4aqpkn3zing0g1qgx7": {
       "StorePath": "/nix/store/697dh7g650f1qd4aqpkn3zing0g1qgx7-libX11-1.6.5",
@@ -181,14 +306,16 @@
         "697dh7g650f1qd4aqpkn3zing0g1qgx7-libX11-1.6.5",
         "6x1chgawfhzb4bssx1nfpsakybwrch0a-libXdmcp-1.1.2",
         "lnx8y5dz42bzgarl0wwdbwsnl2xq5xfh-libxcb-1.12"
-      ]
+      ],
+      "FileSize": 664688
     },
     "6rc9rbk1hpv34zw9fbkf2p3jazzyzi4p": {
       "StorePath": "/nix/store/6rc9rbk1hpv34zw9fbkf2p3jazzyzi4p-ruby2.3.6-multi_json-1.12.2",
       "URL": "nar/0gh58k4rr19ymaqy9r7zv9yzbc8zlk7bk9mlmccj7shsfzzfb91r.nar.xz",
       "References": [
         "6rc9rbk1hpv34zw9fbkf2p3jazzyzi4p-ruby2.3.6-multi_json-1.12.2"
-      ]
+      ],
+      "FileSize": 36892
     },
     "6whlhghm7s7k27sfx3v42pansxlllmv0": {
       "StorePath": "/nix/store/6whlhghm7s7k27sfx3v42pansxlllmv0-python3.6-greenlet-0.4.10",
@@ -198,7 +325,8 @@
         "4wqa1whb42khic67rv9jgip30nxmaii8-python3-3.6.4",
         "9amyh4wlzdwrj56blh15q9kzfffc1yq6-python3.6-six-1.11.0",
         "fbkylmmsn471gs2m3pk0bsjpb1i2y984-python3.6-setuptools-38.2.5"
-      ]
+      ],
+      "FileSize": 14272
     },
     "6x1chgawfhzb4bssx1nfpsakybwrch0a": {
       "StorePath": "/nix/store/6x1chgawfhzb4bssx1nfpsakybwrch0a-libXdmcp-1.1.2",
@@ -206,7 +334,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "6x1chgawfhzb4bssx1nfpsakybwrch0a-libXdmcp-1.1.2"
-      ]
+      ],
+      "FileSize": 8464
     },
     "6y07blp88mrgn05wxbif8yzmd0g2ss4x": {
       "StorePath": "/nix/store/6y07blp88mrgn05wxbif8yzmd0g2ss4x-pcre2-10.46",
@@ -214,7 +343,8 @@
       "References": [
         "6y07blp88mrgn05wxbif8yzmd0g2ss4x-pcre2-10.46",
         "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
-      ]
+      ],
+      "FileSize": 509508
     },
     "6yb5rvr6rvgvx8ylpchwz808djfw07rb": {
       "StorePath": "/nix/store/6yb5rvr6rvgvx8ylpchwz808djfw07rb-python-2.7.14",
@@ -232,7 +362,8 @@
         "q6s4xnsk9kw7yxsv0x4v4cc2rx44zc7h-sqlite-3.21.0",
         "s12d9fcyrb1k6zbpm95xzwx0i1pxc267-gdbm-1.13",
         "v8z56hjwli0yxqczzajg5fhi4n6vm65f-openssl-1.0.2n"
-      ]
+      ],
+      "FileSize": 7769836
     },
     "74q6gfab552408isqxl4cq9z5skkxgwr": {
       "StorePath": "/nix/store/74q6gfab552408isqxl4cq9z5skkxgwr-python3-3.6.4-env",
@@ -246,7 +377,8 @@
         "gs6jvx100qlrddcgrrqn4w0yd21rbhca-python3.6-neovim-0.2.0",
         "k8qmlzx3xcvaan939175hld49wny59rb-python3.6-msgpack-python-0.4.7",
         "nkq0n2m4shlbdvdq0qijib5zyzgmn0vq-bash-4.4-p12"
-      ]
+      ],
+      "FileSize": 4644
     },
     "824r6f71iqprz1jqj2rm6gjzkdj6cwc7": {
       "StorePath": "/nix/store/824r6f71iqprz1jqj2rm6gjzkdj6cwc7-acl-2.2.52",
@@ -255,7 +387,18 @@
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "824r6f71iqprz1jqj2rm6gjzkdj6cwc7-acl-2.2.52",
         "c2kwjd7kdm6lbnhk20q8bx4sgvrpnwa6-attr-2.4.47"
-      ]
+      ],
+      "FileSize": 22400
+    },
+    "82vqj9jg3k726w7lmc2sa4zxk9ls59ym": {
+      "StorePath": "/nix/store/82vqj9jg3k726w7lmc2sa4zxk9ls59ym-bc-1.08.2",
+      "URL": "nar/0s4a1lgihbrcryknaq3by0mzv0qqi5gwmmnsganairm84zvgz7j6.nar.xz",
+      "References": [
+        "41cgbkwax6pd1sgi8l81mamv6rvarryj-readline-8.3p1",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66",
+        "yijhn548p2589pkybgvbhll09bqsxy0q-ncurses-6.5"
+      ],
+      "FileSize": 89108
     },
     "8a77p5lybhlq9z9igpm82bnmjq5w79r9": {
       "StorePath": "/nix/store/8a77p5lybhlq9z9igpm82bnmjq5w79r9-ruby2.3.6-neovim-0.6.1",
@@ -265,7 +408,8 @@
         "678bqsn0nrwii0fa7gs4q9s7yrhb6l8v-ruby2.3.6-msgpack-1.1.0",
         "6rc9rbk1hpv34zw9fbkf2p3jazzyzi4p-ruby2.3.6-multi_json-1.12.2",
         "8a77p5lybhlq9z9igpm82bnmjq5w79r9-ruby2.3.6-neovim-0.6.1"
-      ]
+      ],
+      "FileSize": 84944
     },
     "9amyh4wlzdwrj56blh15q9kzfffc1yq6": {
       "StorePath": "/nix/store/9amyh4wlzdwrj56blh15q9kzfffc1yq6-python3.6-six-1.11.0",
@@ -273,7 +417,8 @@
       "References": [
         "4wqa1whb42khic67rv9jgip30nxmaii8-python3-3.6.4",
         "fbkylmmsn471gs2m3pk0bsjpb1i2y984-python3.6-setuptools-38.2.5"
-      ]
+      ],
+      "FileSize": 16800
     },
     "9mq51i06492rn8ihavf0ff9j38pldg68": {
       "StorePath": "/nix/store/9mq51i06492rn8ihavf0ff9j38pldg68-coreutils-8.29",
@@ -283,7 +428,8 @@
         "824r6f71iqprz1jqj2rm6gjzkdj6cwc7-acl-2.2.52",
         "9mq51i06492rn8ihavf0ff9j38pldg68-coreutils-8.29",
         "c2kwjd7kdm6lbnhk20q8bx4sgvrpnwa6-attr-2.4.47"
-      ]
+      ],
+      "FileSize": 1990524
     },
     "a8ccdnd1hbsk9r03vvfprwmmrf3hwdjh": {
       "StorePath": "/nix/store/a8ccdnd1hbsk9r03vvfprwmmrf3hwdjh-readline-6.3p08",
@@ -291,7 +437,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "dkipv39s32brad6yrkcnij0kkdlf9nkz-ncurses-6.0-20171125"
-      ]
+      ],
+      "FileSize": 110856
     },
     "a96ckwqkcjpibqvfgwqi4v0pjlizba8j": {
       "StorePath": "/nix/store/a96ckwqkcjpibqvfgwqi4v0pjlizba8j-gnugrep-3.1",
@@ -300,14 +447,34 @@
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "a96ckwqkcjpibqvfgwqi4v0pjlizba8j-gnugrep-3.1",
         "lawaycgm7znxi5l1h8kk3cmai23762r0-pcre-8.41"
-      ]
+      ],
+      "FileSize": 161956
     },
     "a9azik4fmwxars0na4aqjfp04rxwkpnw": {
       "StorePath": "/nix/store/a9azik4fmwxars0na4aqjfp04rxwkpnw-expand-response-params",
       "URL": "nar/1l6qphfgnf5q9l0bff6s77q244ljcg9ky9qymi8f7qwbf1343rg2.nar.xz",
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115"
-      ]
+      ],
+      "FileSize": 3136
+    },
+    "awm8pnzpcj63lb26asvjm24j4kwg4d76": {
+      "StorePath": "/nix/store/awm8pnzpcj63lb26asvjm24j4kwg4d76-sqlite-3.50.4-bin",
+      "URL": "nar/03kxgn7plhhvmb3hzzapxih9y13l4n8qvf56hmb9vsayph2xd9pf.nar.xz",
+      "References": [
+        "l7xwm1f6f3zj2x8jwdbi8gdyfbx07sh7-zlib-1.3.1",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 889664
+    },
+    "b9p0zpa93hwvh4d0r1rmgc2500yx2ldn": {
+      "StorePath": "/nix/store/b9p0zpa93hwvh4d0r1rmgc2500yx2ldn-libffi-3.5.2",
+      "URL": "nar/05b72yayyn5hzhj60m8dnx0zf37vdivmbm17gh36hqs0d0yjvg55.nar.xz",
+      "References": [
+        "b9p0zpa93hwvh4d0r1rmgc2500yx2ldn-libffi-3.5.2",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 23316
     },
     "bwx7chi4bfb25xg94abiqc1j2qc6vqa3": {
       "StorePath": "/nix/store/bwx7chi4bfb25xg94abiqc1j2qc6vqa3-python2.7-trollius-1.0.4",
@@ -316,7 +483,8 @@
         "6yb5rvr6rvgvx8ylpchwz808djfw07rb-python-2.7.14",
         "i5ig950zqwln4qi8wfaivgp3bjzzl3jz-python2.7-setuptools-38.2.5",
         "r4fx6d29glss0wjzbpslsp2i6q0dc5hq-python2.7-futures-3.1.1"
-      ]
+      ],
+      "FileSize": 153312
     },
     "c2kwjd7kdm6lbnhk20q8bx4sgvrpnwa6": {
       "StorePath": "/nix/store/c2kwjd7kdm6lbnhk20q8bx4sgvrpnwa6-attr-2.4.47",
@@ -324,7 +492,17 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "c2kwjd7kdm6lbnhk20q8bx4sgvrpnwa6-attr-2.4.47"
-      ]
+      ],
+      "FileSize": 15564
+    },
+    "cky5dqng037hhbd41arkza29cv0hqab6": {
+      "StorePath": "/nix/store/cky5dqng037hhbd41arkza29cv0hqab6-gdbm-1.26-lib",
+      "URL": "nar/0n2b90r7g3h76iq49lb3v5b558v49057h5r7s2kbmc1i52szka78.nar.xz",
+      "References": [
+        "cky5dqng037hhbd41arkza29cv0hqab6-gdbm-1.26-lib",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 94252
     },
     "d87gm73hjl7137b70f6b90zc02v6yx14": {
       "StorePath": "/nix/store/d87gm73hjl7137b70f6b90zc02v6yx14-bundler-1.14.6",
@@ -332,7 +510,8 @@
       "References": [
         "3d5vzizh55xl7mk7dq6hxmx2x3r83788-ruby-2.3.6",
         "d87gm73hjl7137b70f6b90zc02v6yx14-bundler-1.14.6"
-      ]
+      ],
+      "FileSize": 569900
     },
     "dkipv39s32brad6yrkcnij0kkdlf9nkz": {
       "StorePath": "/nix/store/dkipv39s32brad6yrkcnij0kkdlf9nkz-ncurses-6.0-20171125",
@@ -340,7 +519,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "dkipv39s32brad6yrkcnij0kkdlf9nkz-ncurses-6.0-20171125"
-      ]
+      ],
+      "FileSize": 439552
     },
     "dzm1rhjx50g7bc7klkxdsdb75pz6fpzg": {
       "StorePath": "/nix/store/dzm1rhjx50g7bc7klkxdsdb75pz6fpzg-libffi-3.2.1",
@@ -348,7 +528,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "dzm1rhjx50g7bc7klkxdsdb75pz6fpzg-libffi-3.2.1"
-      ]
+      ],
+      "FileSize": 15580
     },
     "fbkylmmsn471gs2m3pk0bsjpb1i2y984": {
       "StorePath": "/nix/store/fbkylmmsn471gs2m3pk0bsjpb1i2y984-python3.6-setuptools-38.2.5",
@@ -357,7 +538,8 @@
         "4wqa1whb42khic67rv9jgip30nxmaii8-python3-3.6.4",
         "fbkylmmsn471gs2m3pk0bsjpb1i2y984-python3.6-setuptools-38.2.5",
         "nkq0n2m4shlbdvdq0qijib5zyzgmn0vq-bash-4.4-p12"
-      ]
+      ],
+      "FileSize": 745772
     },
     "fd4dr0ri4rj0kycxwi4gbhxy6cbggs1s": {
       "StorePath": "/nix/store/fd4dr0ri4rj0kycxwi4gbhxy6cbggs1s-python2.7-greenlet-0.4.10",
@@ -367,19 +549,32 @@
         "6yb5rvr6rvgvx8ylpchwz808djfw07rb-python-2.7.14",
         "i5ig950zqwln4qi8wfaivgp3bjzzl3jz-python2.7-setuptools-38.2.5",
         "r4p4jqcd3r7zl6j00qkld6chqzx15hfn-python2.7-six-1.11.0"
-      ]
+      ],
+      "FileSize": 14344
     },
     "fszfhjfjajwlhzmiyi8bdhvdxlw5n2ff": {
       "StorePath": "/nix/store/fszfhjfjajwlhzmiyi8bdhvdxlw5n2ff-linux-headers-4.4.10",
       "URL": "nar/08sy32qzny57paqy0hx1ar0i3gv7rggy2vw9w2lvd46sp2f5xka5.nar.xz",
       "References": [
         "fszfhjfjajwlhzmiyi8bdhvdxlw5n2ff-linux-headers-4.4.10"
-      ]
+      ],
+      "FileSize": 781836
+    },
+    "fwfpzqrvzhpjp91rbnq64z07diyicbwh": {
+      "StorePath": "/nix/store/fwfpzqrvzhpjp91rbnq64z07diyicbwh-acl-2.3.2",
+      "URL": "nar/060chnkq04xdrf54j9dnn7iz2adpzmxdhcax3433gglsmwjxzmm5.nar.xz",
+      "References": [
+        "12qcfbv6bgmxi1jd2dcddy25ijpcgj60-attr-2.5.2",
+        "fwfpzqrvzhpjp91rbnq64z07diyicbwh-acl-2.3.2",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 25732
     },
     "g4z9m2pl1wcv35yzgjg1934gmj83gx9m": {
       "StorePath": "/nix/store/g4z9m2pl1wcv35yzgjg1934gmj83gx9m-mailcap-2.1.54",
       "URL": "nar/1q652ahj7r20mlr4srdxjcnvx9z1678yx137dh3iiajr22m2lvsz.nar.xz",
-      "References": null
+      "References": null,
+      "FileSize": 26156
     },
     "gd5z1rvhkj13bmxpmr8ayqgkd7z3n85q": {
       "StorePath": "/nix/store/gd5z1rvhkj13bmxpmr8ayqgkd7z3n85q-libuv-1.18.0",
@@ -387,7 +582,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "gd5z1rvhkj13bmxpmr8ayqgkd7z3n85q-libuv-1.18.0"
-      ]
+      ],
+      "FileSize": 76864
     },
     "gs6jvx100qlrddcgrrqn4w0yd21rbhca": {
       "StorePath": "/nix/store/gs6jvx100qlrddcgrrqn4w0yd21rbhca-python3.6-neovim-0.2.0",
@@ -397,7 +593,8 @@
         "6whlhghm7s7k27sfx3v42pansxlllmv0-python3.6-greenlet-0.4.10",
         "fbkylmmsn471gs2m3pk0bsjpb1i2y984-python3.6-setuptools-38.2.5",
         "k8qmlzx3xcvaan939175hld49wny59rb-python3.6-msgpack-python-0.4.7"
-      ]
+      ],
+      "FileSize": 47252
     },
     "gvggz9racjl8v0qw0x3v06b2blhdjr8i": {
       "StorePath": "/nix/store/gvggz9racjl8v0qw0x3v06b2blhdjr8i-unibilium-1.2.1",
@@ -405,7 +602,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "gvggz9racjl8v0qw0x3v06b2blhdjr8i-unibilium-1.2.1"
-      ]
+      ],
+      "FileSize": 22804
     },
     "hniz30sqjd9yra13h8gfnkvfwg7zdv2b": {
       "StorePath": "/nix/store/hniz30sqjd9yra13h8gfnkvfwg7zdv2b-xsel-unstable-2016-09-02",
@@ -413,7 +611,17 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "697dh7g650f1qd4aqpkn3zing0g1qgx7-libX11-1.6.5"
-      ]
+      ],
+      "FileSize": 16228
+    },
+    "hqvsiah013yzb17b13fn18fpqk7m13cg": {
+      "StorePath": "/nix/store/hqvsiah013yzb17b13fn18fpqk7m13cg-zlib-1.3.1-dev",
+      "URL": "nar/09w505c2sd5dzh8xssjbc3ybrqw08fkb3ma9ih09jkn2i1v7cjwb.nar.xz",
+      "References": [
+        "hqvsiah013yzb17b13fn18fpqk7m13cg-zlib-1.3.1-dev",
+        "l7xwm1f6f3zj2x8jwdbi8gdyfbx07sh7-zlib-1.3.1"
+      ],
+      "FileSize": 27380
     },
     "hxcmad417fd8ql9ylx96xpak7da06yiv": {
       "StorePath": "/nix/store/hxcmad417fd8ql9ylx96xpak7da06yiv-libidn2-2.3.8",
@@ -421,7 +629,8 @@
       "References": [
         "3rkccxj7vi0p2a0d48c4a4z2vv2cni88-libunistring-1.4.1",
         "hxcmad417fd8ql9ylx96xpak7da06yiv-libidn2-2.3.8"
-      ]
+      ],
+      "FileSize": 91480
     },
     "i5ig950zqwln4qi8wfaivgp3bjzzl3jz": {
       "StorePath": "/nix/store/i5ig950zqwln4qi8wfaivgp3bjzzl3jz-python2.7-setuptools-38.2.5",
@@ -430,7 +639,8 @@
         "6yb5rvr6rvgvx8ylpchwz808djfw07rb-python-2.7.14",
         "i5ig950zqwln4qi8wfaivgp3bjzzl3jz-python2.7-setuptools-38.2.5",
         "nkq0n2m4shlbdvdq0qijib5zyzgmn0vq-bash-4.4-p12"
-      ]
+      ],
+      "FileSize": 748604
     },
     "i9kmd5fpay17n2dfxzy3nx4pz98qb00a": {
       "StorePath": "/nix/store/i9kmd5fpay17n2dfxzy3nx4pz98qb00a-gcc-wrapper-6.4.0",
@@ -447,7 +657,20 @@
         "p2bkk31685y6b4l30bp9961g6kd133wd-glibc-2.26-115-dev",
         "yfkvvnp2ak44nlhfm4xq82i52kzrj4cc-gcc-6.4.0-lib",
         "yhbp3fy8bmkqziawl78srgzjwqyy91s1-gcc-6.4.0"
-      ]
+      ],
+      "FileSize": 6824
+    },
+    "imad8dvhp77h0pjbckp6wvmnyhp8dpgg": {
+      "StorePath": "/nix/store/imad8dvhp77h0pjbckp6wvmnyhp8dpgg-coreutils-9.8",
+      "URL": "nar/1rbdm88jv6kql0ll5ic1avdqxa2j4qji3s07kh84zd6zk31zdfli.nar.xz",
+      "References": [
+        "12qcfbv6bgmxi1jd2dcddy25ijpcgj60-attr-2.5.2",
+        "2f7yzmvcsydw38zr369l9xpk63v1ld5q-gmp-with-cxx-6.3.0",
+        "fwfpzqrvzhpjp91rbnq64z07diyicbwh-acl-2.3.2",
+        "imad8dvhp77h0pjbckp6wvmnyhp8dpgg-coreutils-9.8",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 584156
     },
     "imnf0q3vmgkq46yn8jaadfp267py6xwh": {
       "StorePath": "/nix/store/imnf0q3vmgkq46yn8jaadfp267py6xwh-luajit-2.1.0-beta3",
@@ -455,7 +678,17 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "imnf0q3vmgkq46yn8jaadfp267py6xwh-luajit-2.1.0-beta3"
-      ]
+      ],
+      "FileSize": 337588
+    },
+    "jhsis6vma1lpli4gmm3m15w735w7010f": {
+      "StorePath": "/nix/store/jhsis6vma1lpli4gmm3m15w735w7010f-libuv-1.51.0-dev",
+      "URL": "nar/02xln4lq5zjwrglhfjv194lb1177lf5a865xvgj3awglm4cmlmlr.nar.xz",
+      "References": [
+        "586m17rh3and42f2pyqvmsmrxaz6bdkn-libuv-1.51.0",
+        "jhsis6vma1lpli4gmm3m15w735w7010f-libuv-1.51.0-dev"
+      ],
+      "FileSize": 19428
     },
     "jlmymwqfa95azrxj3dr2m9i3ji74nri0": {
       "StorePath": "/nix/store/jlmymwqfa95azrxj3dr2m9i3ji74nri0-neovim-ruby-env",
@@ -468,7 +701,27 @@
         "d87gm73hjl7137b70f6b90zc02v6yx14-bundler-1.14.6",
         "jlmymwqfa95azrxj3dr2m9i3ji74nri0-neovim-ruby-env",
         "yl1h7yc9nm8axyngsdlly9k24wwy0grx-gemfile-and-lockfile"
-      ]
+      ],
+      "FileSize": 1220
+    },
+    "jnjcxanszfrp8ln69wp0n9s237xbh7bz": {
+      "StorePath": "/nix/store/jnjcxanszfrp8ln69wp0n9s237xbh7bz-expat-2.7.3",
+      "URL": "nar/1gagi2vvxfamwy20zqcbysmmndhf0wgpsavgp6h1ipmlc5652mhj.nar.xz",
+      "References": [
+        "jnjcxanszfrp8ln69wp0n9s237xbh7bz-expat-2.7.3",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 90104
+    },
+    "k0gl1zc7f5hk87lylxwbipb0b870bcmk": {
+      "StorePath": "/nix/store/k0gl1zc7f5hk87lylxwbipb0b870bcmk-openssl-3.6.0-bin",
+      "URL": "nar/1z0zwq09shf7211ypj62v5qrdg4gvas2rzvwvhkdvb0j737ad7wx.nar.xz",
+      "References": [
+        "61i74yjkj9p1qphfl7018ja4sdwkipx0-openssl-3.6.0",
+        "k0gl1zc7f5hk87lylxwbipb0b870bcmk-openssl-3.6.0-bin",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 384880
     },
     "k2xs32r942aq6va87zkaa7mrwbpjcy49": {
       "StorePath": "/nix/store/k2xs32r942aq6va87zkaa7mrwbpjcy49-bzip2-1.0.6.0.1",
@@ -476,7 +729,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "k2xs32r942aq6va87zkaa7mrwbpjcy49-bzip2-1.0.6.0.1"
-      ]
+      ],
+      "FileSize": 27488
     },
     "k8qmlzx3xcvaan939175hld49wny59rb": {
       "StorePath": "/nix/store/k8qmlzx3xcvaan939175hld49wny59rb-python3.6-msgpack-python-0.4.7",
@@ -487,14 +741,54 @@
         "fbkylmmsn471gs2m3pk0bsjpb1i2y984-python3.6-setuptools-38.2.5",
         "k8qmlzx3xcvaan939175hld49wny59rb-python3.6-msgpack-python-0.4.7",
         "yfkvvnp2ak44nlhfm4xq82i52kzrj4cc-gcc-6.4.0-lib"
-      ]
+      ],
+      "FileSize": 69680
+    },
+    "l30c488dws7z5mazacqsmj25izb9jlp2": {
+      "StorePath": "/nix/store/l30c488dws7z5mazacqsmj25izb9jlp2-sqlite-3.50.4",
+      "URL": "nar/00blpm94c0x9rl325s4p0rv936rr2finffqcn8wyc3zsr02ndfmf.nar.xz",
+      "References": [
+        "l7xwm1f6f3zj2x8jwdbi8gdyfbx07sh7-zlib-1.3.1",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 841872
+    },
+    "l7xwm1f6f3zj2x8jwdbi8gdyfbx07sh7": {
+      "StorePath": "/nix/store/l7xwm1f6f3zj2x8jwdbi8gdyfbx07sh7-zlib-1.3.1",
+      "URL": "nar/0pfzq8ap8aiqy2d72rcxcmfilfy3h1r9djw6yr83isgij8jaa75z.nar.xz",
+      "References": [
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 57288
+    },
+    "l85fis49agvp5q1ild1rfh4rrgmn92sr": {
+      "StorePath": "/nix/store/l85fis49agvp5q1ild1rfh4rrgmn92sr-nodejs-22.21.1",
+      "URL": "nar/1dwqbdwz2blapv095dn8gn331q4b3yr4h83nfdarzvp5jyvcchva.nar.xz",
+      "References": [
+        "35yc81pz0q5yba14lxhn5r3jx5yg6c3l-bash-interactive-5.3p3",
+        "4424mzk2pyia5v1j33zjgrjaivrdy03y-icu4c-76.1",
+        "586m17rh3and42f2pyqvmsmrxaz6bdkn-libuv-1.51.0",
+        "61i74yjkj9p1qphfl7018ja4sdwkipx0-openssl-3.6.0",
+        "hqvsiah013yzb17b13fn18fpqk7m13cg-zlib-1.3.1-dev",
+        "jhsis6vma1lpli4gmm3m15w735w7010f-libuv-1.51.0-dev",
+        "l30c488dws7z5mazacqsmj25izb9jlp2-sqlite-3.50.4",
+        "l7xwm1f6f3zj2x8jwdbi8gdyfbx07sh7-zlib-1.3.1",
+        "l85fis49agvp5q1ild1rfh4rrgmn92sr-nodejs-22.21.1",
+        "na40apkxgv855bc8qpbi6gf0yvdzvnij-sqlite-3.50.4-dev",
+        "xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri-gcc-14.3.0-lib",
+        "xsa61plh8lg41pdpp8hbd143hpczpfh2-icu4c-76.1-dev",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66",
+        "ydrckgnllgg8nmhdwni81h7xhcpnrlhd-openssl-3.6.0-dev"
+      ],
+      "FileSize": 18621388
     },
     "la2xxf4grdyf37a94ak28m7a61yjqzr9": {
       "StorePath": "/nix/store/la2xxf4grdyf37a94ak28m7a61yjqzr9-zlib-1.2.11",
       "URL": "nar/0kywb0l41my18ajmavb9jsi54hfdjvp3qibh0bqc6v8gvccc3xp6.nar.xz",
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115"
-      ]
+      ],
+      "FileSize": 46448
     },
     "lawaycgm7znxi5l1h8kk3cmai23762r0": {
       "StorePath": "/nix/store/lawaycgm7znxi5l1h8kk3cmai23762r0-pcre-8.41",
@@ -502,7 +796,28 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "lawaycgm7znxi5l1h8kk3cmai23762r0-pcre-8.41"
-      ]
+      ],
+      "FileSize": 155952
+    },
+    "lc3zmvfh5cyzdgijm8f5sjgd0q3hl9pk": {
+      "StorePath": "/nix/store/lc3zmvfh5cyzdgijm8f5sjgd0q3hl9pk-fzf-0.67.0",
+      "URL": "nar/04al7a3yhk4p2nd4gna0myd3883vmszylh0zlfz9bcfab2ja3w28.nar.xz",
+      "References": [
+        "148w3ssbgc4wf6xcp6j0s5vy5mz41i8y-iana-etc-20250505",
+        "82vqj9jg3k726w7lmc2sa4zxk9ls59ym-bc-1.08.2",
+        "lc3zmvfh5cyzdgijm8f5sjgd0q3hl9pk-fzf-0.67.0",
+        "rlq03x4cwf8zn73hxaxnx0zn5q9kifls-bash-5.3p3",
+        "xaa75rd44q62nc9mrbvym9d1m6gy0fj8-tzdata-2025b"
+      ],
+      "FileSize": 1457736
+    },
+    "lcwnhmdd6fqf84y35ll4i6ivi2x8vvd5": {
+      "StorePath": "/nix/store/lcwnhmdd6fqf84y35ll4i6ivi2x8vvd5-mpdecimal-4.0.1",
+      "URL": "nar/0rpbwdzzz6aqf1yngycahkblsww7h32yp9p07fjca41yfbxjk15v.nar.xz",
+      "References": [
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 77692
     },
     "lnx8y5dz42bzgarl0wwdbwsnl2xq5xfh": {
       "StorePath": "/nix/store/lnx8y5dz42bzgarl0wwdbwsnl2xq5xfh-libxcb-1.12",
@@ -512,7 +827,27 @@
         "3bqfa90r2vcm5sg40lkylrwhl4mpmq0v-libXau-1.0.8",
         "6x1chgawfhzb4bssx1nfpsakybwrch0a-libXdmcp-1.1.2",
         "lnx8y5dz42bzgarl0wwdbwsnl2xq5xfh-libxcb-1.12"
-      ]
+      ],
+      "FileSize": 168644
+    },
+    "mzl19fy0j4fl395z3pbkwxcmkxi1733v": {
+      "StorePath": "/nix/store/mzl19fy0j4fl395z3pbkwxcmkxi1733v-util-linux-minimal-2.41.2-lib",
+      "URL": "nar/1n7yyy3q9xrhq8a15qabjh4k3hq6dlfm58ngqwwsbilvzylrdvh9.nar.xz",
+      "References": [
+        "mzl19fy0j4fl395z3pbkwxcmkxi1733v-util-linux-minimal-2.41.2-lib",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 517608
+    },
+    "na40apkxgv855bc8qpbi6gf0yvdzvnij": {
+      "StorePath": "/nix/store/na40apkxgv855bc8qpbi6gf0yvdzvnij-sqlite-3.50.4-dev",
+      "URL": "nar/0scq3cskq9rpl99457z2ym25nibdjx501h5p1z7nfirpka8z2f8l.nar.xz",
+      "References": [
+        "awm8pnzpcj63lb26asvjm24j4kwg4d76-sqlite-3.50.4-bin",
+        "l30c488dws7z5mazacqsmj25izb9jlp2-sqlite-3.50.4",
+        "na40apkxgv855bc8qpbi6gf0yvdzvnij-sqlite-3.50.4-dev"
+      ],
+      "FileSize": 142308
     },
     "nkq0n2m4shlbdvdq0qijib5zyzgmn0vq": {
       "StorePath": "/nix/store/nkq0n2m4shlbdvdq0qijib5zyzgmn0vq-bash-4.4-p12",
@@ -520,7 +855,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "nkq0n2m4shlbdvdq0qijib5zyzgmn0vq-bash-4.4-p12"
-      ]
+      ],
+      "FileSize": 363080
     },
     "p2bkk31685y6b4l30bp9961g6kd133wd": {
       "StorePath": "/nix/store/p2bkk31685y6b4l30bp9961g6kd133wd-glibc-2.26-115-dev",
@@ -529,7 +865,8 @@
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "292g14vvf1p8h3nkdx4vvq7b1bh3p1ww-glibc-2.26-115-bin",
         "fszfhjfjajwlhzmiyi8bdhvdxlw5n2ff-linux-headers-4.4.10"
-      ]
+      ],
+      "FileSize": 379996
     },
     "p3gb43i9n9b22d5mr9nhh7fliyf1wpl6": {
       "StorePath": "/nix/store/p3gb43i9n9b22d5mr9nhh7fliyf1wpl6-python2.7-msgpack-python-0.4.7",
@@ -540,7 +877,28 @@
         "i5ig950zqwln4qi8wfaivgp3bjzzl3jz-python2.7-setuptools-38.2.5",
         "p3gb43i9n9b22d5mr9nhh7fliyf1wpl6-python2.7-msgpack-python-0.4.7",
         "yfkvvnp2ak44nlhfm4xq82i52kzrj4cc-gcc-6.4.0-lib"
-      ]
+      ],
+      "FileSize": 70440
+    },
+    "pfkyva576bsx649x918pgysdr1rcyxzq": {
+      "StorePath": "/nix/store/pfkyva576bsx649x918pgysdr1rcyxzq-less-679",
+      "URL": "nar/00lc7nkgmqs4i7gg46lcxqilj3bhznq2sa1883mkz6mbhddynmb0.nar.xz",
+      "References": [
+        "6y07blp88mrgn05wxbif8yzmd0g2ss4x-pcre2-10.46",
+        "pfkyva576bsx649x918pgysdr1rcyxzq-less-679",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66",
+        "yijhn548p2589pkybgvbhll09bqsxy0q-ncurses-6.5"
+      ],
+      "FileSize": 113884
+    },
+    "q5vlz5jl6p7mv220s2vf6z5pqi1n935z": {
+      "StorePath": "/nix/store/q5vlz5jl6p7mv220s2vf6z5pqi1n935z-xz-5.8.1",
+      "URL": "nar/19550h0kcgykw7bh2jga62pyrya6lpi31g02j6b7hcjis90xmjsn.nar.xz",
+      "References": [
+        "q5vlz5jl6p7mv220s2vf6z5pqi1n935z-xz-5.8.1",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 194416
     },
     "q6s4xnsk9kw7yxsv0x4v4cc2rx44zc7h": {
       "StorePath": "/nix/store/q6s4xnsk9kw7yxsv0x4v4cc2rx44zc7h-sqlite-3.21.0",
@@ -548,7 +906,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "q6s4xnsk9kw7yxsv0x4v4cc2rx44zc7h-sqlite-3.21.0"
-      ]
+      ],
+      "FileSize": 492932
     },
     "qnv9sbhbw70v990q01432ipqkl4y0dcc": {
       "StorePath": "/nix/store/qnv9sbhbw70v990q01432ipqkl4y0dcc-neovim-0.2.1",
@@ -570,7 +929,20 @@
         "wfyaky8wmcphk95n68z05h5n1d0y38k6-libtermkey-0.19",
         "wxlgknz0q89lb6k67s0gszswwwns12n5-jemalloc-5.0.1",
         "x78x5h01cbl5hp61bswa4cq3171j1xcc-neovim-libvterm-2017-11-05"
-      ]
+      ],
+      "FileSize": 4122656
+    },
+    "qrrvbacv3lrabr87l2fz1wc8nmp5r0zr": {
+      "StorePath": "/nix/store/qrrvbacv3lrabr87l2fz1wc8nmp5r0zr-vim-9.1.1869",
+      "URL": "nar/15x9id62g8x6mg15j6fkwfbr87q06swkwlzlh5g13n2b9gx5yllp.nar.xz",
+      "References": [
+        "35yc81pz0q5yba14lxhn5r3jx5yg6c3l-bash-interactive-5.3p3",
+        "qrrvbacv3lrabr87l2fz1wc8nmp5r0zr-vim-9.1.1869",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66",
+        "y2wdhdcrffp9hnkzk06d178hq3g98jay-gawk-5.3.2",
+        "yijhn548p2589pkybgvbhll09bqsxy0q-ncurses-6.5"
+      ],
+      "FileSize": 9027780
     },
     "r4fx6d29glss0wjzbpslsp2i6q0dc5hq": {
       "StorePath": "/nix/store/r4fx6d29glss0wjzbpslsp2i6q0dc5hq-python2.7-futures-3.1.1",
@@ -578,7 +950,8 @@
       "References": [
         "6yb5rvr6rvgvx8ylpchwz808djfw07rb-python-2.7.14",
         "i5ig950zqwln4qi8wfaivgp3bjzzl3jz-python2.7-setuptools-38.2.5"
-      ]
+      ],
+      "FileSize": 18156
     },
     "r4p4jqcd3r7zl6j00qkld6chqzx15hfn": {
       "StorePath": "/nix/store/r4p4jqcd3r7zl6j00qkld6chqzx15hfn-python2.7-six-1.11.0",
@@ -586,7 +959,8 @@
       "References": [
         "6yb5rvr6rvgvx8ylpchwz808djfw07rb-python-2.7.14",
         "i5ig950zqwln4qi8wfaivgp3bjzzl3jz-python2.7-setuptools-38.2.5"
-      ]
+      ],
+      "FileSize": 16556
     },
     "rlq03x4cwf8zn73hxaxnx0zn5q9kifls": {
       "StorePath": "/nix/store/rlq03x4cwf8zn73hxaxnx0zn5q9kifls-bash-5.3p3",
@@ -594,7 +968,8 @@
       "References": [
         "rlq03x4cwf8zn73hxaxnx0zn5q9kifls-bash-5.3p3",
         "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
-      ]
+      ],
+      "FileSize": 498652
     },
     "s12d9fcyrb1k6zbpm95xzwx0i1pxc267": {
       "StorePath": "/nix/store/s12d9fcyrb1k6zbpm95xzwx0i1pxc267-gdbm-1.13",
@@ -602,12 +977,14 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "s12d9fcyrb1k6zbpm95xzwx0i1pxc267-gdbm-1.13"
-      ]
+      ],
+      "FileSize": 150164
     },
     "shs2lyjm5yv7fmg4pwyvrlv9zr4macmv": {
       "StorePath": "/nix/store/shs2lyjm5yv7fmg4pwyvrlv9zr4macmv-gcc-14.3.0-libgcc",
       "URL": "nar/0rb32hq3h0klp75ky5bdyzs9bfqvnrvz2ygb8vhk8qbqavzbajbg.nar.xz",
-      "References": null
+      "References": null,
+      "FileSize": 73948
     },
     "v8z56hjwli0yxqczzajg5fhi4n6vm65f": {
       "StorePath": "/nix/store/v8z56hjwli0yxqczzajg5fhi4n6vm65f-openssl-1.0.2n",
@@ -615,7 +992,18 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "v8z56hjwli0yxqczzajg5fhi4n6vm65f-openssl-1.0.2n"
-      ]
+      ],
+      "FileSize": 1071080
+    },
+    "vv4kbv1pc9zfwz1z24h9l2ibjhwypl87": {
+      "StorePath": "/nix/store/vv4kbv1pc9zfwz1z24h9l2ibjhwypl87-gemini-cli-0.21.1",
+      "URL": "nar/0sv2g0mdhzdyils01jbks99h0im6jfgjgx45cqhwp58ww05pzqyw.nar.xz",
+      "References": [
+        "3lll9y925zz9393sa59h653xik66srjb-python3-3.13.9",
+        "l85fis49agvp5q1ild1rfh4rrgmn92sr-nodejs-22.21.1",
+        "rlq03x4cwf8zn73hxaxnx0zn5q9kifls-bash-5.3p3"
+      ],
+      "FileSize": 21225228
     },
     "vxrfcx8g9jhhi7may9p8jnrpr7nwv1wp": {
       "StorePath": "/nix/store/vxrfcx8g9jhhi7may9p8jnrpr7nwv1wp-expat-2.2.5",
@@ -623,7 +1011,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "vxrfcx8g9jhhi7may9p8jnrpr7nwv1wp-expat-2.2.5"
-      ]
+      ],
+      "FileSize": 67768
     },
     "w2qlls13sk6bllbni0dyag88fmmvwbin": {
       "StorePath": "/nix/store/w2qlls13sk6bllbni0dyag88fmmvwbin-xz-5.2.3",
@@ -631,7 +1020,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "w2qlls13sk6bllbni0dyag88fmmvwbin-xz-5.2.3"
-      ]
+      ],
+      "FileSize": 104268
     },
     "wfyaky8wmcphk95n68z05h5n1d0y38k6": {
       "StorePath": "/nix/store/wfyaky8wmcphk95n68z05h5n1d0y38k6-libtermkey-0.19",
@@ -640,7 +1030,8 @@
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "dkipv39s32brad6yrkcnij0kkdlf9nkz-ncurses-6.0-20171125",
         "wfyaky8wmcphk95n68z05h5n1d0y38k6-libtermkey-0.19"
-      ]
+      ],
+      "FileSize": 41152
     },
     "wm0629w5zhwvlixj1341xfxwlpnl2amg": {
       "StorePath": "/nix/store/wm0629w5zhwvlixj1341xfxwlpnl2amg-python2.7-neovim-0.2.0",
@@ -651,7 +1042,8 @@
         "fd4dr0ri4rj0kycxwi4gbhxy6cbggs1s-python2.7-greenlet-0.4.10",
         "i5ig950zqwln4qi8wfaivgp3bjzzl3jz-python2.7-setuptools-38.2.5",
         "p3gb43i9n9b22d5mr9nhh7fliyf1wpl6-python2.7-msgpack-python-0.4.7"
-      ]
+      ],
+      "FileSize": 46404
     },
     "wxlgknz0q89lb6k67s0gszswwwns12n5": {
       "StorePath": "/nix/store/wxlgknz0q89lb6k67s0gszswwwns12n5-jemalloc-5.0.1",
@@ -661,7 +1053,8 @@
         "nkq0n2m4shlbdvdq0qijib5zyzgmn0vq-bash-4.4-p12",
         "wxlgknz0q89lb6k67s0gszswwwns12n5-jemalloc-5.0.1",
         "yfkvvnp2ak44nlhfm4xq82i52kzrj4cc-gcc-6.4.0-lib"
-      ]
+      ],
+      "FileSize": 284716
     },
     "wxn5gn8amxm1w0ikcx4gbs8a17wvss4j": {
       "StorePath": "/nix/store/wxn5gn8amxm1w0ikcx4gbs8a17wvss4j-binutils-2.28.1",
@@ -670,7 +1063,8 @@
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "la2xxf4grdyf37a94ak28m7a61yjqzr9-zlib-1.2.11",
         "wxn5gn8amxm1w0ikcx4gbs8a17wvss4j-binutils-2.28.1"
-      ]
+      ],
+      "FileSize": 20386640
     },
     "x78x5h01cbl5hp61bswa4cq3171j1xcc": {
       "StorePath": "/nix/store/x78x5h01cbl5hp61bswa4cq3171j1xcc-neovim-libvterm-2017-11-05",
@@ -678,12 +1072,23 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "x78x5h01cbl5hp61bswa4cq3171j1xcc-neovim-libvterm-2017-11-05"
-      ]
+      ],
+      "FileSize": 39540
     },
     "xaa75rd44q62nc9mrbvym9d1m6gy0fj8": {
       "StorePath": "/nix/store/xaa75rd44q62nc9mrbvym9d1m6gy0fj8-tzdata-2025b",
       "URL": "nar/165sqx1rnhl69ra9abw4izvh63gnniknh5kfydph2s4hvgahg11z.nar.xz",
-      "References": null
+      "References": null,
+      "FileSize": 126028
+    },
+    "xgavznqg1ay2hycpp7yy9ia1n751jcla": {
+      "StorePath": "/nix/store/xgavznqg1ay2hycpp7yy9ia1n751jcla-bzip2-1.0.8",
+      "URL": "nar/0qijn1xfix04va6f1ns3w0mnnsh9417q6jw14rpn5mzmh0n7i99p.nar.xz",
+      "References": [
+        "xgavznqg1ay2hycpp7yy9ia1n751jcla-bzip2-1.0.8",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 29532
     },
     "xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri": {
       "StorePath": "/nix/store/xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri-gcc-14.3.0-lib",
@@ -692,7 +1097,21 @@
         "shs2lyjm5yv7fmg4pwyvrlv9zr4macmv-gcc-14.3.0-libgcc",
         "xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri-gcc-14.3.0-lib",
         "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
-      ]
+      ],
+      "FileSize": 2039740
+    },
+    "xsa61plh8lg41pdpp8hbd143hpczpfh2": {
+      "StorePath": "/nix/store/xsa61plh8lg41pdpp8hbd143hpczpfh2-icu4c-76.1-dev",
+      "URL": "nar/0yhszb9lfwzin1vfqhqckbp91bkdfg3qzjb7i5ksg1bzik0a64av.nar.xz",
+      "References": [
+        "4424mzk2pyia5v1j33zjgrjaivrdy03y-icu4c-76.1",
+        "imad8dvhp77h0pjbckp6wvmnyhp8dpgg-coreutils-9.8",
+        "rlq03x4cwf8zn73hxaxnx0zn5q9kifls-bash-5.3p3",
+        "xm08aqdd7pxcdhm0ak6aqb1v7hw5q6ri-gcc-14.3.0-lib",
+        "xsa61plh8lg41pdpp8hbd143hpczpfh2-icu4c-76.1-dev",
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
+      ],
+      "FileSize": 911308
     },
     "xx7cm72qy2c0643cm1ipngd87aqwkcdp": {
       "StorePath": "/nix/store/xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66",
@@ -701,7 +1120,27 @@
         "2a3izq4hffdd9r9gb2w6q2ibdc86kss6-xgcc-14.3.0-libgcc",
         "hxcmad417fd8ql9ylx96xpak7da06yiv-libidn2-2.3.8",
         "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66"
-      ]
+      ],
+      "FileSize": 6558676
+    },
+    "y2wdhdcrffp9hnkzk06d178hq3g98jay": {
+      "StorePath": "/nix/store/y2wdhdcrffp9hnkzk06d178hq3g98jay-gawk-5.3.2",
+      "URL": "nar/1dgwqwbvwyg4xzf96ka0368gx36bcrqb6ccqxqjbdnaxpzdrcfrv.nar.xz",
+      "References": [
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66",
+        "y2wdhdcrffp9hnkzk06d178hq3g98jay-gawk-5.3.2"
+      ],
+      "FileSize": 651220
+    },
+    "ydrckgnllgg8nmhdwni81h7xhcpnrlhd": {
+      "StorePath": "/nix/store/ydrckgnllgg8nmhdwni81h7xhcpnrlhd-openssl-3.6.0-dev",
+      "URL": "nar/1ghlp9l26bp135l73h9yw04grrmkyk0ljy21ampkl1h29ylv73ck.nar.xz",
+      "References": [
+        "61i74yjkj9p1qphfl7018ja4sdwkipx0-openssl-3.6.0",
+        "k0gl1zc7f5hk87lylxwbipb0b870bcmk-openssl-3.6.0-bin",
+        "ydrckgnllgg8nmhdwni81h7xhcpnrlhd-openssl-3.6.0-dev"
+      ],
+      "FileSize": 276392
     },
     "yfkvvnp2ak44nlhfm4xq82i52kzrj4cc": {
       "StorePath": "/nix/store/yfkvvnp2ak44nlhfm4xq82i52kzrj4cc-gcc-6.4.0-lib",
@@ -709,7 +1148,8 @@
       "References": [
         "1zv5dwifxg5fh08gif8ld3h9f40y8czh-glibc-2.26-115",
         "yfkvvnp2ak44nlhfm4xq82i52kzrj4cc-gcc-6.4.0-lib"
-      ]
+      ],
+      "FileSize": 1163636
     },
     "yhbp3fy8bmkqziawl78srgzjwqyy91s1": {
       "StorePath": "/nix/store/yhbp3fy8bmkqziawl78srgzjwqyy91s1-gcc-6.4.0",
@@ -720,12 +1160,23 @@
         "p2bkk31685y6b4l30bp9961g6kd133wd-glibc-2.26-115-dev",
         "yfkvvnp2ak44nlhfm4xq82i52kzrj4cc-gcc-6.4.0-lib",
         "yhbp3fy8bmkqziawl78srgzjwqyy91s1-gcc-6.4.0"
-      ]
+      ],
+      "FileSize": 32975172
+    },
+    "yijhn548p2589pkybgvbhll09bqsxy0q": {
+      "StorePath": "/nix/store/yijhn548p2589pkybgvbhll09bqsxy0q-ncurses-6.5",
+      "URL": "nar/0kar9ncmkszs5z6vmqprksk01qs61k2swvvgql210z174qnx7dk1.nar.xz",
+      "References": [
+        "xx7cm72qy2c0643cm1ipngd87aqwkcdp-glibc-2.40-66",
+        "yijhn548p2589pkybgvbhll09bqsxy0q-ncurses-6.5"
+      ],
+      "FileSize": 506204
     },
     "yl1h7yc9nm8axyngsdlly9k24wwy0grx": {
       "StorePath": "/nix/store/yl1h7yc9nm8axyngsdlly9k24wwy0grx-gemfile-and-lockfile",
       "URL": "nar/0lf4p9264vz8zhz93l9s2p1d6y02h6x99p6v07vrpdjs03sg9isz.nar.xz",
-      "References": null
+      "References": null,
+      "FileSize": 352
     }
   },
   "files": {}

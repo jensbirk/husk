@@ -7,5 +7,10 @@ packages:
         channel: unstable
     - neovim:
         config: ./configs/neovim:.config/nvim
+    - vim
+    - gemini-cli
+    - obsidian
+    - fzf
+    - bat
 env:
     EDITOR: neovim
